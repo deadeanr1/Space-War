@@ -9,6 +9,10 @@
 #define IDD_SPACEWAR_DIALOG	102
 #define IDD_ABOUTBOX			103
 #define IDM_ABOUT				104
+#define IDM_MUSIC				110
+#define IDM_TYPE				111
+#define IDM_NEW					112
+#define IDB_BACKGROUND			113
 #define IDM_EXIT				105
 #define IDI_SPACEWAR			107
 #define IDI_SMALL				108

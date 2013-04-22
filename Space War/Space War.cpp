@@ -10,8 +10,10 @@
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
-int WINDOW_WIDTH = 660;
-int WINDOW_HEIGHT = 480;
+int WINDOW_WIDTH = 1000;
+int WINDOW_HEIGHT = 700;
+HANDLE	hBitBuffer, hBitBack;
+
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -19,6 +21,35 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
+
+
+void DrawMatrix(HDC hdc){
+	int i, j;
+	HPEN hPen;
+    HBRUSH hBrush;
+
+    // prepare the color
+    hPen = CreatePen (PS_SOLID, 6,RGB(180,180,180));
+    hBrush = CreateSolidBrush(RGB(42,85,255));
+    SelectObject (hdc, hPen);
+    SelectObject (hdc, hBrush);
+
+	// 1st zone
+    Rectangle(hdc,27, 127,434, 534);
+    //horizontal lines
+	hPen = CreatePen (PS_SOLID, 1,RGB(0,0,0));
+	SelectObject (hdc, hPen);
+    for (int i=1; i<10; i++){
+        MoveToEx(hdc, 30, 130+40*i, NULL);
+        LineTo(hdc, 430, 130+40*i);
+    }
+	
+	for (int i=1; i<10; i++){
+        MoveToEx(hdc, 30+40*i, 130, NULL);
+		LineTo(hdc, 30+40*i, 530);
+    }
+
+}
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -35,6 +66,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_SPACEWAR, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
+
+	//loading the background
+	hBitBack = LoadImage(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND), IMAGE_BITMAP, 
+		WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+	hInst = hInstance;
+	if (!hBitBack)
+		return FALSE;
 
 	// Perform application initialization:
 	if (!InitInstance (hInstance, nCmdShow))
@@ -106,22 +144,42 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;
+   RECT rect;
+   DWORD style;
+   HRGN region;
+
+   rect.left = 100;										//x
+   rect.top = 100;										//y
+   rect.right = rect.left + WINDOW_WIDTH;			//width
+   rect.bottom = rect.top + WINDOW_HEIGHT;		//height
+
 
    hInst = hInstance; // Store instance handle in our global variable
+
+   style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
+		WS_MINIMIZEBOX | WS_CLIPCHILDREN;
 
    hWnd = CreateWindow(
         szWindowClass,          // (opt) classname
         szTitle,                // (opt) The window name
         WS_OVERLAPPEDWINDOW & (~WS_THICKFRAME),
-        CW_USEDEFAULT, 
-        CW_USEDEFAULT,
-        WINDOW_WIDTH,           // width of the window
-        WINDOW_HEIGHT,          // hight vertical position of the window.
+        rect.left, 
+        rect.top,
+        rect.right-rect.left,           // width of the window
+        rect.bottom-rect.top,          // hight vertical position of the window.
         NULL,                   // (opt) handle to the parent or owner window of the window being created
         NULL,                   // (opt) handle to a menu
         hInstance,              // (opt) handle to the instance of the module to be associated with the window.
         NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
     );
+   
+   
+	/*region = CreateRoundRectRgn(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 200, 200);
+	if (!region)
+		return FALSE;
+
+	if (!SetWindowRgn(hWnd, region, FALSE))
+		return FALSE;*/
 
    if (!hWnd)
    {
@@ -144,14 +202,29 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	- post a quit message and return
 //
 //
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
-	HDC hdc;
+	static HDC hdc, hdcMem;
+    // A bitmap handle for the double buffring
+    static HBITMAP hbmMem;
+    // A handle of old memory context
+    static HANDLE hOld;
+
+	HDC memhdc;
+	HBITMAP hbitmp;
+	RECT rect;
 
 	switch (message)
 	{
+
+	case WM_TIMER:
+			if (wParam == 1){
+				InvalidateRect(hWnd, NULL, FALSE);
+			}
+
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
@@ -170,9 +243,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
+		HDC		hdc_buf, hdc_temp;
+		HGDIOBJ	temp;
+		static HBITMAP hbmp;
+		BITMAP  bitmap;
+		static int cxSource, cySource;
+		HDC hdc, hdcMem;
+		HPEN Pen;
+		PAINTSTRUCT ps;
+
+			hdc = BeginPaint(hWnd, &ps);
+			hbmp = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_BACKGROUND));
+			GetObject( hbmp, sizeof(BITMAP), &bitmap);
+
+			hdc = GetDC(hWnd);
+			hdcMem = CreateCompatibleDC (hdc) ;
+			SelectObject (hdcMem, hbmp) ;
+			DrawMatrix(hdcMem);
+			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
+				 
+		//delete hdcMem, hbmp	
 		EndPaint(hWnd, &ps);
 		break;
+
+	case WM_CREATE:
+		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
