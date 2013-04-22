@@ -6,7 +6,7 @@ Space-War
 http://www.youtube.com/watch?v=FG9nH3V14uk
 ##some tasks
 1. schit(c)a
-2.desene-po4ti facut
+2. desene-po4ti facut
 3. pozitionarea corabiilor
 	3.1 random
 	3.2 de mina
