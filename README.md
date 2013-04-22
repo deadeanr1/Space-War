@@ -19,5 +19,8 @@ http://www.youtube.com/watch?v=FG9nH3V14uk
 10. ceva scoreboard
 11. vreun bitmap cu inoplaneteanen undeva in colt la inceput
 http://173.203.31.34/galaxylegion/images/aliens/zolazin.png
-12. Yaroslav zi ce fel de clasa vrei
-13. pe urma stergem sau adaugam sarcini
+12. pe urma stergem sau adaugam sarcini
+
+![Conceptual scheme](Scheme.jpg)
+
+![Pseudocode](Base_pseudocode.jpg)
