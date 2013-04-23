@@ -24,3 +24,4 @@ http://173.203.31.34/galaxylegion/images/aliens/zolazin.png
 ![Conceptual scheme](Scheme.jpg)
 
 ![Pseudocode](Base_pseudocode.jpg)
+![Result Window](https://github.com/deadeanr1/Space-War/blob/master/images/game.png?raw=true)
