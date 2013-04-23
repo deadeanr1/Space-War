@@ -10,7 +10,7 @@
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The name of player
 TCHAR szplayer[MAX_LOADSTRING] = L"Player";					// The name of ememy
-TCHAR szenemy[MAX_LOADSTRING] = L"Computer";				// The title bar text
+TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";				// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
@@ -383,6 +383,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			rect2.bottom = 680;
 			DrawText (hdc, L"TIME", -1, &rect2, DT_SINGLELINE) ;
 
+			rect2.top = 40;
+			rect2.left = 380;
+			rect2.right = 530;
+			rect2.bottom = 70;
+			DrawText (hdc, L"STATUS", -1, &rect2, DT_SINGLELINE) ;
+
 			//name of the players
 			SetTextColor(hdc, RGB(0,0,0));
 			hBrush = CreateSolidBrush(RGB(247,214,0));
@@ -407,7 +413,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			rect2.bottom = 150;
 			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
 
-		
+					
 		EndPaint(hWnd, &ps);
 		break;
 
