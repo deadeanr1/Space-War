@@ -13,6 +13,8 @@
 #define IDM_TYPE				111
 #define IDM_NEW					112
 #define IDB_BACKGROUND			113
+#define IDB_WATER				114
+#define IDM_INSTR				115
 #define IDM_EXIT				105
 #define IDI_SPACEWAR			107
 #define IDI_SMALL				108

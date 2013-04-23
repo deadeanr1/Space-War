@@ -23,31 +23,102 @@ INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 
 
-void DrawMatrix(HDC hdc){
+void DrawMatrix(HDC hdc, HWND hWnd){
 	int i, j;
 	HPEN hPen;
     HBRUSH hBrush;
+	POINT Pt[4];
+	int RGB = RGB(82,90,90);
 
+
+	
+	// 1st zone
+	////////////////////////////////////////////////////
     // prepare the color
-    hPen = CreatePen (PS_SOLID, 6,RGB(180,180,180));
-    hBrush = CreateSolidBrush(RGB(42,85,255));
+    hPen = CreatePen (PS_SOLID, 6,RGB);
+    hBrush = CreateSolidBrush(RGB);
     SelectObject (hdc, hPen);
     SelectObject (hdc, hBrush);
 
-	// 1st zone
-    Rectangle(hdc,27, 127,434, 534);
+	Rectangle(hdc,40, 100,461, 542);
+	Rectangle(hdc,40, 80,160, 120);
+	
+
+	// Triangle
+	int lpPts[] = { 3 };
+	Pt[0].x = 160;
+	Pt[0].y = 80;
+	Pt[1].x = 140;
+	Pt[1].y = 120;
+	Pt[2].x = 260;
+	Pt[2].y = 120;
+	PolyPolygon(hdc, Pt, lpPts, 1);
+
+	//water
+	hBrush = CreateSolidBrush(RGB(85,127,255));
+    SelectObject (hdc, hBrush);
+    Rectangle(hdc,47, 127,454, 535);
+
     //horizontal lines
-	hPen = CreatePen (PS_SOLID, 1,RGB(0,0,0));
+	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
 	SelectObject (hdc, hPen);
     for (int i=1; i<10; i++){
-        MoveToEx(hdc, 30, 130+40*i, NULL);
-        LineTo(hdc, 430, 130+40*i);
+        MoveToEx(hdc, 50, 130+40*i, NULL);
+        LineTo(hdc, 450, 130+40*i);
     }
 	
 	for (int i=1; i<10; i++){
-        MoveToEx(hdc, 30+40*i, 130, NULL);
-		LineTo(hdc, 30+40*i, 530);
+        MoveToEx(hdc, 50+40*i, 130, NULL);
+		LineTo(hdc, 50+40*i, 530);
     }
+	////////////////////////////////////////////////////
+
+
+	// 2nd zone
+	////////////////////////////////////////////////////
+    // prepare the color
+    hPen = CreatePen (PS_SOLID, 6,RGB);
+    hBrush = CreateSolidBrush(RGB);
+    SelectObject (hdc, hPen);
+    SelectObject (hdc, hBrush);
+
+	Rectangle(hdc,539, 100,960, 542);
+	Rectangle(hdc,840, 80,960, 120);
+	
+
+	// Triangle
+	int lpPts2[] = { 3 };
+	Pt[0].x = 838;
+	Pt[0].y = 80; 
+	Pt[1].x = 840;
+	Pt[1].y = 120;
+	Pt[2].x = 720;
+	Pt[2].y = 120;
+	PolyPolygon(hdc, Pt, lpPts, 1);
+
+	//water
+	hBrush = CreateSolidBrush(RGB(85,127,255));
+    SelectObject (hdc, hBrush);
+	//Rectangle(hdc,40, 100,461, 542);
+    //Rectangle(hdc,47, 127,454, 535);
+
+
+	Rectangle(hdc,546, 127,953, 535);
+
+    //horizontal lines
+	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
+	SelectObject (hdc, hPen);
+    for (int i=1; i<10; i++){
+        MoveToEx(hdc, 549, 130+40*i, NULL);
+        LineTo(hdc, 949, 130+40*i);
+    }
+	
+	for (int i=1; i<10; i++){
+        MoveToEx(hdc, 549+40*i, 130, NULL);
+		LineTo(hdc, 549+40*i, 530);
+    }
+	////////////////////////////////////////////////////
+
 
 }
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -116,7 +187,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_DROPSHADOW;
 	wcex.lpfnWndProc	= WndProc;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
@@ -147,9 +218,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    RECT rect;
    DWORD style;
    HRGN region;
+   HBITMAP hwater;
 
-   rect.left = 100;										//x
-   rect.top = 100;										//y
+   rect.left = 140;										//x
+   rect.top = 10;										//y
    rect.right = rect.left + WINDOW_WIDTH;			//width
    rect.bottom = rect.top + WINDOW_HEIGHT;		//height
 
@@ -158,11 +230,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
 		WS_MINIMIZEBOX | WS_CLIPCHILDREN;
+  
 
    hWnd = CreateWindow(
         szWindowClass,          // (opt) classname
         szTitle,                // (opt) The window name
-        WS_OVERLAPPEDWINDOW & (~WS_THICKFRAME),
+        WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,	// The style of the window being created.
         rect.left, 
         rect.top,
         rect.right-rect.left,           // width of the window
@@ -173,6 +246,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
     );
    
+   hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
    
 	/*region = CreateRoundRectRgn(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 200, 200);
 	if (!region)
@@ -245,10 +319,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hWnd, &ps);
 		HDC		hdc_buf, hdc_temp;
 		HGDIOBJ	temp;
-		static HBITMAP hbmp;
+		static HBITMAP hbmp, hback, hwater;
 		BITMAP  bitmap;
 		static int cxSource, cySource;
-		HDC hdc, hdcMem;
+		HDC hdc, hdcMem, hdcMem2;
 		HPEN Pen;
 		PAINTSTRUCT ps;
 
@@ -259,10 +333,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			hdc = GetDC(hWnd);
 			hdcMem = CreateCompatibleDC (hdc) ;
 			SelectObject (hdcMem, hbmp) ;
-			DrawMatrix(hdcMem);
+			DrawMatrix(hdcMem, hWnd);
 			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
-				 
-		//delete hdcMem, hbmp	
+			DeleteDC(hdcMem);
+	        DeleteObject(hbmp);
+			
 		EndPaint(hWnd, &ps);
 		break;
 
