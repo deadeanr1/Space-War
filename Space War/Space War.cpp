@@ -8,12 +8,14 @@
 
 // Global Variables:
 HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
+TCHAR szTitle[MAX_LOADSTRING];					// The name of player
+TCHAR szplayer[MAX_LOADSTRING] = L"Player";					// The name of ememy
+TCHAR szenemy[MAX_LOADSTRING] = L"Computer";				// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
 HANDLE	hBitBuffer, hBitBack;
-
+static DWORD StartTime;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -22,6 +24,16 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 
+
+void InitializeTime()
+{
+    StartTime = GetTickCount();
+}
+
+float GetTime()
+{
+    return (GetTickCount() - StartTime) / 1000.0f;
+}
 
 void DrawMatrix(HDC hdc, HWND hWnd){
 	int i, j;
@@ -220,9 +232,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HRGN region;
    HBITMAP hwater;
 
-   rect.left = 140;										//x
-   rect.top = 10;										//y
-   rect.right = rect.left + WINDOW_WIDTH;			//width
+   rect.left = 140;								//x
+   rect.top = 10;								//y
+   rect.right = rect.left + WINDOW_WIDTH;		//width
    rect.bottom = rect.top + WINDOW_HEIGHT;		//height
 
 
@@ -238,8 +250,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,	// The style of the window being created.
         rect.left, 
         rect.top,
-        rect.right-rect.left,           // width of the window
-        rect.bottom-rect.top,          // hight vertical position of the window.
+        rect.right-rect.left,   // width of the window
+        rect.bottom-rect.top,   // hight vertical position of the window.
         NULL,                   // (opt) handle to the parent or owner window of the window being created
         NULL,                   // (opt) handle to a menu
         hInstance,              // (opt) handle to the instance of the module to be associated with the window.
@@ -315,6 +327,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		HDC		hdc_buf, hdc_temp;
@@ -325,6 +338,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HDC hdc, hdcMem, hdcMem2;
 		HPEN Pen;
 		PAINTSTRUCT ps;
+		HFONT hFont;
+		RECT rect, rect1, rect2;
+		HBRUSH hBrush;
 
 			hdc = BeginPaint(hWnd, &ps);
 			hbmp = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_BACKGROUND));
@@ -337,7 +353,61 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
 			DeleteDC(hdcMem);
 	        DeleteObject(hbmp);
+		
+			rect.top = 550;
+			rect.left = 100;
+			rect.right = 650;
+			rect.bottom = 650;
+			hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+			SelectObject(hdc, hFont);
+			SetBkMode (hdc, TRANSPARENT) ;
+			SetTextColor(hdc, RGB(255,255,255));
+			DrawText (hdc, L"Ships", -1, &rect, DT_SINGLELINE) ;
+
+			rect1.top = 550;
+			rect1.left = 850;
+			rect1.right = 920;
+			rect1.bottom = 650;
+			DrawText (hdc, L"Ships", -1, &rect1, DT_SINGLELINE) ;
+
+			rect2.top = 600;
+			rect2.left = 310;
+			rect2.right = 400;
+			rect2.bottom = 680;
+			DrawText (hdc, L"SCORE", -1, &rect2, DT_SINGLELINE) ;
+
+			rect2.top = 600;
+			rect2.left = 610;
+			rect2.right = 700;
+			rect2.bottom = 680;
+			DrawText (hdc, L"TIME", -1, &rect2, DT_SINGLELINE) ;
+
+			//name of the players
+			SetTextColor(hdc, RGB(0,0,0));
+			hBrush = CreateSolidBrush(RGB(247,214,0));
+			SelectObject (hdc, hBrush);
+			RoundRect(hdc, 55, 90, 185, 120, 20, 20 );
+			RoundRect(hdc, 820, 90, 945, 120, 20, 20 );
+
+			hFont = CreateFont(25,0,0,0,FW_LIGHT,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+			SelectObject(hdc, hFont);
+			SetBkMode (hdc, TRANSPARENT) ;
+
+			rect2.top = 90;
+			rect2.left = 70;
+			rect2.right = 170;
+			rect2.bottom = 150;
+			DrawText (hdc, szplayer, -1, &rect2, DT_SINGLELINE) ;
 			
+			rect2.top = 90;
+			rect2.left = 830;
+			rect2.right = 930;
+			rect2.bottom = 150;
+			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
+
+		
 		EndPaint(hWnd, &ps);
 		break;
 
