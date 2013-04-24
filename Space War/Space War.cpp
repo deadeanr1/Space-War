@@ -22,7 +22,7 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-
+BOOL CALLBACK 		NetworkProc(HWND, UINT, WPARAM, LPARAM);
 
 
 void InitializeTime()
@@ -320,9 +320,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
+			
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
+
+		case ID_SETTINGS_NETWORKSETTINGS:
+           {
+                int ret = DialogBox(GetModuleHandle(NULL), 
+                    MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
+                    InvalidateRect(hWnd, NULL, FALSE);
+
+                    if(ret == -1){
+                        MessageBox(hWnd, L"Dialog failed!", L"Error",
+                            MB_OK | MB_ICONINFORMATION);
+                    }
+            break;
+           }
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -447,4 +461,78 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+
+BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	static HWND		  PortInput, IPInput;
+		
+    switch(Message)
+    {
+        case WM_INITDIALOG:
+
+			// create textbox fot IP
+			IPInput= CreateWindowEx(
+				WS_EX_CLIENTEDGE,
+				L"Edit",
+				L"",
+				WS_CHILD | WS_VISIBLE | WS_BORDER,
+				100,
+				75,
+				140,
+				25,
+				hwnd,			// HWND hWndParent (opt)
+				(HMENU) IDC_MAIN_EDIT,	// HMENU hMenu (opt)
+				NULL,			// HINSTANCE hInstance (opt)
+				NULL);			// LPVOID lpParam (opt)
+
+			// create textbox fot IP
+			PortInput= CreateWindowEx(
+				WS_EX_CLIENTEDGE,
+				L"Edit",
+				L"",
+				WS_CHILD | WS_VISIBLE | WS_BORDER,
+				100,
+				110,
+				40,
+				25,
+				hwnd,			
+				(HMENU) IDC_MAIN_EDIT,	
+				NULL,			
+				NULL);	
+
+            break;
+		case WM_CREATE:
+			break;
+        case WM_COMMAND:
+            switch(LOWORD(wParam))
+            {    
+
+                case IDOK:{
+					TCHAR* buffer = new TCHAR[150];
+					TCHAR* temp   = new TCHAR[20];
+
+					// Pass the strins from textbox using buffer
+					GetWindowText(IPInput,buffer,150);
+					GetWindowText(PortInput,buffer,150);
+
+					//send messages
+					//SendMessage(Output,EM_REPLACESEL,TRUE,(LPARAM)L" ");
+					delete [] temp;
+					delete [] buffer;
+					
+				}
+					EndDialog(hwnd, IDCANCEL);
+					break;
+
+                case IDCANCEL:
+                    EndDialog(hwnd, IDCANCEL);
+                break;
+            }
+            break;
+
+         default:
+            return FALSE;
+    }
+    return TRUE;
 }
