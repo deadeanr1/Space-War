@@ -37,8 +37,3 @@ ipch/
 *.cachefile
 
 
-# Others
-*.sln
-*.vcxproj
-*.vcxproj.*
-
