@@ -458,19 +458,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     GetCursorPos(&pCursor);
 
     case WM_LBUTTONDOWN:
-            Move = TRUE;
-      break;
+         Move = TRUE;
+	     square = GetCell();
+		 break;
 
-        case WM_MOUSEMOVE:
-            // DRAW(pCursor.x, pCursor.y)
-      // get coordonate of the square
-      square = GetCell();
-            break;
+    case WM_MOUSEMOVE:
+		// get coordonate of the square
+		square = GetCell();
+        break;
 
-        case WM_LBUTTONUP:
-      // DRAW(pCursor.x, pCursor.y)
-      Move = FALSE;
-    break;
+    case WM_LBUTTONUP:
+		Move = FALSE;
+		break;
 
 	case WM_DESTROY:
 		PostQuitMessage(0);
