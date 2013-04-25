@@ -75,7 +75,6 @@ POINT GetCell(){
     square.x = floor(x)+1;
     float y = ((pCursor.y-TopZone)/40);
     square.y = floor(y)+1;
-	square.y=square.y;
 
   }
   return square;
