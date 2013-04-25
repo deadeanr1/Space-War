@@ -3,10 +3,14 @@
 
 #include "stdafx.h"
 #include "Space War.h"
-#define	  LeftZone  50
-#define	  RightZone 450
-#define   TopZone   130
-#define	  BottomZone 530
+#define	  LeftZone1  50
+#define	  RightZone1 450
+#define   TopZone1   130
+#define	  BottomZone1 530
+#define	  LeftZone2  549
+#define	  RightZone2 949
+#define   TopZone2   130
+#define	  BottomZone2 530
 
 #define MAX_LOADSTRING 100
 
@@ -69,14 +73,14 @@ POINT GetCell()
   // get cursor position
   GetCursorPos(&pCursor);
 
-  // check if the cursor is in the zone
+  // check if the cursor is in the Zone1
 
-  if ((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
+  if ((pCursor.x<RightZone2) && (pCursor.x>LeftZone2) && (pCursor.y>TopZone2) && (pCursor.y< BottomZone2))
   {
     //see for the cell
-    float x = ((pCursor.x-LeftZone)/40);
+    float x = ((pCursor.x-LeftZone2)/40);
     square.x = floor(x)+1;
-    float y = ((pCursor.y-TopZone)/40);
+    float y = ((pCursor.y-TopZone2)/40);
     square.y = floor(y)+1;
   }
   return square;
@@ -90,7 +94,7 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 	POINT Pt[4];
 	int RGB = RGB(82,90,90);
 
-	// 1st zone
+	// 1st Zone1
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
     hBrush = CreateSolidBrush(RGB);
@@ -121,14 +125,14 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 
     for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, LeftZone, TopZone+40*i, NULL);
-        LineTo(hdc, RightZone, TopZone+40*i);
+        MoveToEx(hdc, LeftZone1, TopZone1+40*i, NULL);
+        LineTo(hdc, RightZone1, TopZone1+40*i);
     }
 	
 	for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, LeftZone+40*i, TopZone, NULL);
-		LineTo(hdc, LeftZone+40*i, BottomZone);
+        MoveToEx(hdc, LeftZone1+40*i, TopZone1, NULL);
+		LineTo(hdc, LeftZone1+40*i, BottomZone1);
     }
 
 
@@ -164,14 +168,14 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 	SelectObject (hdc, hPen);
     for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, 549, 130+40*i, NULL);
-        LineTo(hdc, 949, 130+40*i);
+        MoveToEx(hdc, LeftZone2, TopZone2+40*i, NULL);
+        LineTo(hdc, RightZone2, TopZone2+40*i);
     }
 	
 	for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, 549+40*i, 130, NULL);
-		LineTo(hdc, 549+40*i, 530);
+        MoveToEx(hdc, LeftZone2+40*i, TopZone2, NULL);
+		LineTo(hdc, LeftZone2+40*i, BottomZone2);
     }
 }
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -466,12 +470,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		pCursor.y = HIWORD(lParam);
 		// check if the cursor is in the zone
 
-		if((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
+		if((pCursor.x<RightZone2) && (pCursor.x>LeftZone2) && (pCursor.y>TopZone2) && (pCursor.y< BottomZone2))
 		{
 			//see for the cell
-			float x = ((pCursor.x-LeftZone)/40);
+			float x = ((pCursor.x-LeftZone2)/40);
 			square.x = floor(x);
-			float y = ((pCursor.y-TopZone)/40);
+			float y = ((pCursor.y-TopZone2)/40);
 			square.y = floor(y);
 		}
         break;
