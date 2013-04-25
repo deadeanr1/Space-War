@@ -11,6 +11,8 @@
 // Windows Header Files:
 #include <windows.h>
 #include <CommCtrl.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
 
 // C RunTime Header Files
 #include <stdlib.h>
@@ -21,6 +23,10 @@
 #include <cstdlib>
 #include <math.h>
 #include <time.h>
+
+// Local Header Files
+//#include "BaseGame.h"
+//#include "PvPGame.h"
 
 
 // TODO: reference additional headers your program requires here

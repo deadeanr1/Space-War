@@ -64,22 +64,21 @@ float GetTime()
 // get the cell of the cursor
 POINT GetCell()
 {
-  POINT square = {0};
+	POINT square = {0};
 
-  // get cursor position
-  GetCursorPos(&pCursor);
+	// get cursor position
+	GetCursorPos(&pCursor);
 
-  // check if the cursor is in the zone
-
-  if ((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
-  {
-    //see for the cell
-    float x = ((pCursor.x-LeftZone)/40);
-    square.x = floor(x)+1;
-    float y = ((pCursor.y-TopZone)/40);
-    square.y = floor(y)+1;
-  }
-  return square;
+	// check if the cursor is in the zone
+	if ((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
+	{
+		//see for the cell
+		float x = ((pCursor.x-LeftZone)/40);
+		square.x = floor(x)+1;
+		float y = ((pCursor.y-TopZone)/40);
+		square.y = floor(y)+1;
+	}
+	return square;
 }
 
 void DrawMatrix(HDC hdc, HWND hWnd)
@@ -130,7 +129,6 @@ void DrawMatrix(HDC hdc, HWND hWnd)
         MoveToEx(hdc, LeftZone+40*i, TopZone, NULL);
 		LineTo(hdc, LeftZone+40*i, BottomZone);
     }
-
 
 	// 2nd zone
     // prepare the color

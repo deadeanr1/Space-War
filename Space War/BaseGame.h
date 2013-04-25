@@ -3,21 +3,13 @@
 
 #pragma once
 
-#include <vector>
-#include <cstdlib>
-#include <time.h>
+#include "stdafx.h"
 
 using namespace std;
 
 #define MAP_SIZE 10
 
-struct Battleship
-{
-	int totalHealth;
-	int health;
-	int textureType;
-    int x1, y1, x2, y2;
-};
+struct Battleship;
 
 class BaseGame
 {
