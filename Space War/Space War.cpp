@@ -3,6 +3,10 @@
 
 #include "stdafx.h"
 #include "Space War.h"
+#define	  LeftZone  50
+#define	  RightZone 450
+#define   TopZone   130
+#define	  BottomZone 530
 
 #define MAX_LOADSTRING 100
 
@@ -66,12 +70,13 @@ POINT GetCell()
   GetCursorPos(&pCursor);
 
   // check if the cursor is in the zone
-  if ((pCursor.x<550) && (pCursor.x>50) && (pCursor.y>130) && (pCursor.y< 530))
+
+  if ((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
   {
     //see for the cell
-    float x = ((pCursor.x-50)/40);
+    float x = ((pCursor.x-LeftZone)/40);
     square.x = floor(x)+1;
-    float y = ((pCursor.y-130)/40)+1;
+    float y = ((pCursor.y-TopZone)/40)+1;
     square.y = floor(y)+1;
   }
     //printf("\n%c",square.x);
@@ -87,7 +92,6 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 	int RGB = RGB(82,90,90);
 
 	// 1st zone
-	////////////////////////////////////////////////////
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
     hBrush = CreateSolidBrush(RGB);
@@ -115,20 +119,20 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     //horizontal lines
 	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
 	SelectObject (hdc, hPen);
-    for (int i=1; i<10; i++){
+    for (int i=1; i<10; i++)
+	{
         MoveToEx(hdc, 50, 130+40*i, NULL);
         LineTo(hdc, 450, 130+40*i);
     }
 	
-	for (int i=1; i<10; i++){
+	for (int i=1; i<10; i++)
+	{
         MoveToEx(hdc, 50+40*i, 130, NULL);
 		LineTo(hdc, 50+40*i, 530);
     }
-	////////////////////////////////////////////////////
 
 
 	// 2nd zone
-	////////////////////////////////////////////////////
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
     hBrush = CreateSolidBrush(RGB);
@@ -298,6 +302,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HBITMAP hbitmp;
 	RECT rect;
 	int ret;
+	POINT square = {0};
 	
 	switch (message)
 	{
@@ -460,14 +465,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     pCursor.y = HIWORD(lParam);
     GetCursorPos(&pCursor);
 
-    case WM_LBUTTONDOWN:
-         Move = TRUE;
-	     square = GetCell();
-		 break;
+   // case WM_LBUTTONDOWN:
+   //      Move = TRUE;
+	  //   //square = GetCell();
+		 //break;
 
-    case WM_MOUSEMOVE:
+    case WM_LBUTTONDOWN:
 		// get coordonate of the square
 		//square = GetCell();
+
+		// get cursor position
+		//GetCursorPos(&pCursor);pCu
+		pCursor.x = LOWORD(lParam);
+		pCursor.y = HIWORD(lParam);
+		// check if the cursor is in the zone
+
+		if((pCursor.x<RightZone) && (pCursor.x>LeftZone) && (pCursor.y>TopZone) && (pCursor.y< BottomZone))
+		{
+			//see for the cell
+			float x = ((pCursor.x-LeftZone)/40);
+			square.x = floor(x)+1;
+			float y = ((pCursor.y-TopZone)/40)+1;
+			square.y = floor(y)+1;
+		}
         break;
 
     case WM_LBUTTONUP:
