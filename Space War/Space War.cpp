@@ -298,11 +298,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     // A handle of old memory context
     static HANDLE hOld;
+	static HWND ShuffleButton;
+
 
 	HDC memhdc;
 	HBITMAP hbitmp;
 	RECT rect;
 
+	
 	switch (message)
 	{
 
@@ -311,9 +314,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			InvalidateRect(hWnd, NULL, FALSE);
 		}
+
+	case WM_CREATE:
+
+		ShuffleButton=CreateWindowEx(NULL,
+				L"BUTTON",
+				L"Shuffle",          
+				WS_CHILD | WS_VISIBLE | ES_CENTER,
+				350,              
+		        105,              
+                80,               
+                20,               
+				hWnd,	          
+				(HMENU)IDC_MAIN_BUTTON,
+				GetModuleHandle(NULL),
+				NULL);		      
+
+		break;
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
+
+		if((HWND)lParam == ShuffleButton){
+
+			// CODE To do...
+			
+		}
+
 		// Parse the menu selections:
 		switch (wmId)
 		{
@@ -429,9 +456,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					
 		EndPaint(hWnd, &ps);
-		break;
-
-	case WM_CREATE:
 		break;
 
 	case WM_DESTROY:
