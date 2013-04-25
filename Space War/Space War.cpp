@@ -42,8 +42,6 @@ void DrawMatrix(HDC hdc, HWND hWnd){
 	POINT Pt[4];
 	int RGB = RGB(82,90,90);
 
-
-	
 	// 1st zone
 	////////////////////////////////////////////////////
     // prepare the color
@@ -55,7 +53,6 @@ void DrawMatrix(HDC hdc, HWND hWnd){
 	Rectangle(hdc,40, 100,461, 542);
 	Rectangle(hdc,40, 80,160, 120);
 	
-
 	// Triangle
 	int lpPts[] = { 3 };
 	Pt[0].x = 160;
@@ -129,9 +126,6 @@ void DrawMatrix(HDC hdc, HWND hWnd){
         MoveToEx(hdc, 549+40*i, 130, NULL);
 		LineTo(hdc, 549+40*i, 530);
     }
-	////////////////////////////////////////////////////
-
-
 }
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -305,7 +299,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
-
 	case WM_TIMER:
 		if (wParam == 1)
 		{
@@ -337,6 +330,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			   }
 			   break;
            }
+		case ID_NEWGAME_VERSUSCOMPUTER:
+			MessageBox(0, _T("vs. Comp"), 0, 0);
+			break;
+		case ID_VS_CREATEGAME:
+			MessageBox(0, _T("waiting for connection"), 0, 0);
+			break;
+		case ID_VS_CONNECTTOGAME:
+			MessageBox(0, _T("Connecting to server"), 0, 0);
+			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -426,8 +428,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			rect2.right = 930;
 			rect2.bottom = 150;
 			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
-
-					
+		
 		EndPaint(hWnd, &ps);
 		break;
 
