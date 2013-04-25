@@ -9,8 +9,8 @@
 // Global Variables:
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The name of player
-TCHAR szplayer[MAX_LOADSTRING] = L"Player";					// The name of ememy
-TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";				// The title bar text
+TCHAR szplayer[MAX_LOADSTRING] = L"Player";		// The name of ememy
+TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";		// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
@@ -307,10 +307,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 
 	case WM_TIMER:
-			if (wParam == 1){
-				InvalidateRect(hWnd, NULL, FALSE);
-			}
-
+		if (wParam == 1)
+		{
+			InvalidateRect(hWnd, NULL, FALSE);
+		}
 	case WM_COMMAND:
 		wmId    = LOWORD(wParam);
 		wmEvent = HIWORD(wParam);
@@ -327,15 +327,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		case ID_SETTINGS_NETWORKSETTINGS:
            {
-                int ret = DialogBox(GetModuleHandle(NULL), 
-                    MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
-                    InvalidateRect(hWnd, NULL, FALSE);
+			   int ret = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
+               
+			   InvalidateRect(hWnd, NULL, FALSE);
 
-                    if(ret == -1){
-                        MessageBox(hWnd, L"Dialog failed!", L"Error",
-                            MB_OK | MB_ICONINFORMATION);
-                    }
-            break;
+			   if(ret == -1)
+			   {
+                   MessageBox(hWnd, L"Dialog failed!", L"Error", MB_OK | MB_ICONINFORMATION);
+			   }
+			   break;
            }
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -471,35 +471,7 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
     {
         case WM_INITDIALOG:
 
-			// create textbox fot IP
-			IPInput= CreateWindowEx(
-				WS_EX_CLIENTEDGE,
-				L"Edit",
-				L"",
-				WS_CHILD | WS_VISIBLE | WS_BORDER,
-				100,
-				75,
-				140,
-				25,
-				hwnd,			// HWND hWndParent (opt)
-				(HMENU) IDC_MAIN_EDIT,	// HMENU hMenu (opt)
-				NULL,			// HINSTANCE hInstance (opt)
-				NULL);			// LPVOID lpParam (opt)
-
-			// create textbox fot IP
-			PortInput= CreateWindowEx(
-				WS_EX_CLIENTEDGE,
-				L"Edit",
-				L"",
-				WS_CHILD | WS_VISIBLE | WS_BORDER,
-				100,
-				110,
-				40,
-				25,
-				hwnd,			
-				(HMENU) IDC_MAIN_EDIT,	
-				NULL,			
-				NULL);	
+			
 
             break;
 		case WM_CREATE:
