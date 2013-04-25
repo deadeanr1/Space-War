@@ -125,9 +125,6 @@ void DrawMatrix(HDC hdc, HWND hWnd){
 	//water
 	hBrush = CreateSolidBrush(RGB(85,127,255));
     SelectObject (hdc, hBrush);
-	//Rectangle(hdc,40, 100,461, 542);
-    //Rectangle(hdc,47, 127,454, 535);
-
 
 	Rectangle(hdc,546, 127,953, 535);
 
@@ -189,21 +186,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int) msg.wParam;
 }
 
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-//  COMMENTS:
-//
-//    This function and its usage are only necessary if you want this code
-//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
-//    function that was added to Windows 95. It is important to call this function
-//    so that the application will get 'well formed' small icons associated
-//    with it.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -225,16 +207,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;
@@ -270,13 +242,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     );
    
    hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
-   
-	/*region = CreateRoundRectRgn(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 200, 200);
-	if (!region)
-		return FALSE;
-
-	if (!SetWindowRgn(hWnd, region, FALSE))
-		return FALSE;*/
 
    if (!hWnd)
    {
@@ -288,17 +253,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    return TRUE;
 }
-
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND	- process the application menu
-//  WM_PAINT	- Paint the main window
-//  WM_DESTROY	- post a quit message and return
-//
-//
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -365,7 +319,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ret = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
                
 			InvalidateRect(hWnd, NULL, FALSE);
-
+			
 			if(ret == -1)
 			{
 				MessageBox(hWnd, L"Dialog failed!", L"Error", MB_OK | MB_ICONINFORMATION);   
@@ -505,7 +459,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	static HWND		  PortInput, IPInput;
-		
+	int ip1, ip2, ip3, ip4;	
     switch(Message)
     {
 	case WM_INITDIALOG:
@@ -528,7 +482,13 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			//delete [] temp;
 			//delete [] buffer;
 
-			//SendMessage(
+			SendMessage(hwnd, IPM_GETADDRESS, 0, (LPARAM)&ipAddress);
+
+			ip1 = FIRST_IPADDRESS(ipAddress);
+			ip2 = SECOND_IPADDRESS(ipAddress);
+			ip3 = THIRD_IPADDRESS(ipAddress);
+			ip4 = FOURTH_IPADDRESS(ipAddress);
+
 			EndDialog(hwnd, IDCANCEL);
 			break;    
 		case IDCANCEL:
@@ -575,7 +535,7 @@ void shuffleMap(vector<vector<int> > &map, vector<Battleship> &ships)
 	enemy_map.resize(10);
 	for(size_t i=0; i<10; i++)
 	{
-		enemy_map.resize(10);
+		enemy_map[i].resize(10);
 		for(size_t j=0; j<10; j++)
 		{
 			enemy_map.at(i).at(j) = -1;
