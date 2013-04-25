@@ -76,10 +76,9 @@ POINT GetCell()
     //see for the cell
     float x = ((pCursor.x-LeftZone)/40);
     square.x = floor(x)+1;
-    float y = ((pCursor.y-TopZone)/40)+1;
+    float y = ((pCursor.y-TopZone)/40);
     square.y = floor(y)+1;
   }
-    //printf("\n%c",square.x);
   return square;
 }
 
@@ -119,16 +118,17 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     //horizontal lines
 	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
 	SelectObject (hdc, hPen);
+
     for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, 50, 130+40*i, NULL);
-        LineTo(hdc, 450, 130+40*i);
+        MoveToEx(hdc, LeftZone, TopZone+40*i, NULL);
+        LineTo(hdc, RightZone, TopZone+40*i);
     }
 	
 	for (int i=1; i<10; i++)
 	{
-        MoveToEx(hdc, 50+40*i, 130, NULL);
-		LineTo(hdc, 50+40*i, 530);
+        MoveToEx(hdc, LeftZone+40*i, TopZone, NULL);
+		LineTo(hdc, LeftZone+40*i, BottomZone);
     }
 
 
@@ -460,22 +460,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 
-	case WM_KEYDOWN:
-    pCursor.x = LOWORD(lParam);
-    pCursor.y = HIWORD(lParam);
-    GetCursorPos(&pCursor);
-
-   // case WM_LBUTTONDOWN:
-   //      Move = TRUE;
-	  //   //square = GetCell();
-		 //break;
-
-    case WM_LBUTTONDOWN:
-		// get coordonate of the square
-		//square = GetCell();
-
+	case WM_LBUTTONDOWN:
 		// get cursor position
-		//GetCursorPos(&pCursor);pCu
 		pCursor.x = LOWORD(lParam);
 		pCursor.y = HIWORD(lParam);
 		// check if the cursor is in the zone
@@ -484,12 +470,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			//see for the cell
 			float x = ((pCursor.x-LeftZone)/40);
-			square.x = floor(x)+1;
-			float y = ((pCursor.y-TopZone)/40)+1;
-			square.y = floor(y)+1;
+			square.x = floor(x);
+			float y = ((pCursor.y-TopZone)/40);
+			square.y = floor(y);
 		}
         break;
-
     case WM_LBUTTONUP:
 		Move = FALSE;
 		break;
