@@ -467,7 +467,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_MOUSEMOVE:
 		// get coordonate of the square
-		square = GetCell();
+		//square = GetCell();
         break;
 
     case WM_LBUTTONUP:
