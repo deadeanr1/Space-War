@@ -26,7 +26,7 @@ public:
 	~PvPGame();
 
 	virtual void init();	
-	virtual int sendState(int x, int y, bool *result);	//should be called in a separate thread
+	virtual int sendState(int x, int y, int *result);	//should be called in a separate thread
 	virtual int receiveState(int *x, int *y);			//should be called in a separate thread
 	virtual void close();
 

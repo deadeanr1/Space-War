@@ -35,12 +35,13 @@ struct Battleship
 };
 
 DWORD ipAddress = 0;
+char ipAddr[20];
 vector<vector<int>> map;	//map of my battleships
 vector<Battleship>  ships;	//where my ships are located
 vector<vector<int>> enemy_map; //map of enemy's battleships
 
 void shuffleMap(vector<vector<int> > &map, vector<Battleship> &ships);
-int randships(int map[10][10],Battleship B[10]);
+int randships(int map[10][10], Battleship B[10]);
 
 void InitializeTime()
 {
@@ -52,7 +53,8 @@ float GetTime()
     return (GetTickCount() - StartTime) / 1000.0f;
 }
 
-void DrawMatrix(HDC hdc, HWND hWnd){
+void DrawMatrix(HDC hdc, HWND hWnd)
+{
 	int i, j;
 	HPEN hPen;
     HBRUSH hBrush;
@@ -131,12 +133,14 @@ void DrawMatrix(HDC hdc, HWND hWnd){
     //horizontal lines
 	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
 	SelectObject (hdc, hPen);
-    for (int i=1; i<10; i++){
+    for (int i=1; i<10; i++)
+	{
         MoveToEx(hdc, 549, 130+40*i, NULL);
         LineTo(hdc, 949, 130+40*i);
     }
 	
-	for (int i=1; i<10; i++){
+	for (int i=1; i<10; i++)
+	{
         MoveToEx(hdc, 549+40*i, 130, NULL);
 		LineTo(hdc, 549+40*i, 530);
     }
@@ -264,7 +268,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // A handle of old memory context
     static HANDLE hOld;
 	static HWND ShuffleButton;
-
 
 	HDC memhdc;
 	HBITMAP hbitmp;
@@ -459,10 +462,12 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	static HWND		  PortInput, IPInput;
-	int ip1, ip2, ip3, ip4;	
+	int ip1, ip2, ip3, ip4;
     switch(Message)
     {
 	case WM_INITDIALOG:
+		IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
+		SendMessage(IPInput, IPM_SETADDRESS, 0, (LPARAM)ipAddress);
 		break;
 	case WM_CREATE:
 		break;
@@ -470,24 +475,15 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		switch(LOWORD(wParam))  
 		{         
 		case IDOK:
-			//TCHAR* buffer = new TCHAR[150];
-			//TCHAR* temp   = new TCHAR[20];
-
-			//// Pass the strins from textbox using buffer
-			//GetWindowText(IPInput,buffer,150);
-			//GetWindowText(PortInput,buffer,150);
-
-			////send messages
-			////SendMessage(Output,EM_REPLACESEL,TRUE,(LPARAM)L" ");
-			//delete [] temp;
-			//delete [] buffer;
-
-			SendMessage(hwnd, IPM_GETADDRESS, 0, (LPARAM)&ipAddress);
+			IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
+			SendMessage(IPInput, IPM_GETADDRESS, 0, (LPARAM)&ipAddress);
 
 			ip1 = FIRST_IPADDRESS(ipAddress);
 			ip2 = SECOND_IPADDRESS(ipAddress);
 			ip3 = THIRD_IPADDRESS(ipAddress);
 			ip4 = FOURTH_IPADDRESS(ipAddress);
+
+			sprintf(ipAddr, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
 
 			EndDialog(hwnd, IDCANCEL);
 			break;    

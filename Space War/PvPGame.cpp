@@ -5,6 +5,7 @@ PvPGame::PvPGame()
 	sock(INVALID_SOCKET),
 	servSock(INVALID_SOCKET)
 {
+
 }
 
 PvPGame::~PvPGame()
@@ -23,7 +24,7 @@ int PvPGame::connectToGame(const char* in_addr)
 	sockAddr.sin_family = AF_INET;
 	sockAddr.sin_addr.S_un.S_addr = inet_addr(in_addr);
 	sockAddr.sin_port = htons(SERVER_PORT);
-
+	workAsServer = false;
 	return connect(sock, (struct sockaddr*)&sockAddr, sizeof(sockAddr));
 }
 
@@ -55,10 +56,11 @@ int PvPGame::createGame()
 	exitCode = bindTo(INADDR_ANY);
 	exitCode = beginListen();
 	exitCode = acceptConnection();
+	workAsServer = true;
 	return exitCode;
 }
 
-int PvPGame::sendState(int x, int y, bool *result)
+int PvPGame::sendState(int x, int y, int *result)
 {
 	DWORD disconnect = 0;
 	LONG32 nRemainRecv = 0, nXfer, nRemainSend;
@@ -72,7 +74,14 @@ int PvPGame::sendState(int x, int y, bool *result)
 	pBuffer = (LPBYTE)&msg;
 	while( nRemainSend > 0 && !disconnect )
 	{
-		nXfer = send(sock, (char*)pBuffer, nRemainSend, 0);
+		if( workAsServer )
+		{
+			nXfer = send(servSock, (char*)pBuffer, nRemainSend, 0);
+		}
+		else
+		{
+			nXfer = send(sock, (char*)pBuffer, nRemainSend, 0);
+		}
 		if( nXfer == SOCKET_ERROR ) return 1;
 		disconnect = (nXfer==0);
 		nRemainSend -= nXfer;
@@ -80,13 +89,20 @@ int PvPGame::sendState(int x, int y, bool *result)
 	}
 
 	//Receive result: did I hit him or not? boolean value
-	nRemainRecv = sizeof(bool);
-	bool val;
+	nRemainRecv = sizeof(int);
+	int val;
 	pBuffer = (LPBYTE)&val;
 	disconnect = 0;
 	while( nRemainRecv > 0 && !disconnect )
 	{
-		nXfer = recv( sock, (char*)pBuffer, nRemainRecv, 0);
+		if( workAsServer )
+		{
+			nXfer = recv( servSock, (char*)pBuffer, nRemainRecv, 0);
+		}
+		else
+		{
+			nXfer = recv( sock, (char*)pBuffer, nRemainRecv, 0);
+		}
 		disconnect = (nXfer==0);
 		nRemainRecv -= nXfer;
 		pBuffer += nXfer;
@@ -109,22 +125,30 @@ int PvPGame::receiveState(int *x, int *y)
 	//Enemy's bomb is arriving. Hold on!
 	while( nRemainRecv > 0 && !disconnect )
 	{
-		nXfer = recv(sock, (char*)pBuffer, nRemainRecv, 0);
+		if( workAsServer )
+		{
+			nXfer = recv(servSock, (char*)pBuffer, nRemainRecv, 0);
+		}
+		else
+		{
+			nXfer = recv(sock, (char*)pBuffer, nRemainRecv, 0);
+		}
 		disconnect = (nXfer==0);
 		nRemainRecv -= nXfer;
 		pBuffer += nXfer;
 	}
-
+	*x = msg.i;
+	*y = msg.j;
 	//Check if he hit us? 
-	bool result = false;
+	int result = 0;
 	int ship = map.at(msg.i).at(msg.j);
 	switch( ship )
 	{
 	case -1:
-		result = false; //He missed! Ha! Looser!
+		result = 0; //He missed! Ha! Looser!
 		break;
 	case -2:
-		result = false; //Already used location! Dumbass!
+		result = 0; //Already used location! Dumbass!
 		break;
 	default:
 		if( ship >=0 && ship < ships.size() )
@@ -145,7 +169,14 @@ int PvPGame::receiveState(int *x, int *y)
 	disconnect = 0;
 	while( nRemainSend > 0 && !disconnect )
 	{
-		nXfer = send(sock, (char*)pBuffer, nRemainSend, 0);
+		if( workAsServer )
+		{
+			nXfer = send(servSock, (char*)pBuffer, nRemainSend, 0);
+		}
+		else
+		{
+			nXfer = send(sock, (char*)pBuffer, nRemainSend, 0);
+		}
 		if( nXfer == SOCKET_ERROR ) return 1;
 		disconnect = (nXfer==0);
 		nRemainSend -= nXfer;
