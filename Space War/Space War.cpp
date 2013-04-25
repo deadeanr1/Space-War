@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Space War.h"
 #define	  LeftZone  50
-#define	  RightZone 550
+#define	  RightZone 450
 #define   TopZone   130
 #define	  BottomZone 530
 
@@ -73,10 +73,10 @@ POINT GetCell(){
     //see for the cell
     float x = ((pCursor.x-LeftZone)/40);
     square.x = floor(x)+1;
-    float y = ((pCursor.y-TopZone)/40)+1;
+    float y = ((pCursor.y-TopZone)/40);
     square.y = floor(y)+1;
+	square.y=square.y;
 
-    //printf("\n%c",square.x);
   }
   return square;
 }
@@ -117,13 +117,13 @@ void DrawMatrix(HDC hdc, HWND hWnd){
 	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
 	SelectObject (hdc, hPen);
     for (int i=1; i<10; i++){
-        MoveToEx(hdc, 50, 130+40*i, NULL);
-        LineTo(hdc, 450, 130+40*i);
+        MoveToEx(hdc, LeftZone, TopZone+40*i, NULL);
+        LineTo(hdc, RightZone, TopZone+40*i);
     }
 	
 	for (int i=1; i<10; i++){
-        MoveToEx(hdc, 50+40*i, 130, NULL);
-		LineTo(hdc, 50+40*i, 530);
+        MoveToEx(hdc, LeftZone+40*i, TopZone, NULL);
+		LineTo(hdc, LeftZone+40*i, BottomZone);
     }
 
 
