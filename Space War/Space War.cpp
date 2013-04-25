@@ -18,6 +18,10 @@ int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
 HANDLE	hBitBuffer, hBitBack;
 static DWORD StartTime;
+// cursor position of the cursor
+POINT pCursor;
+POINT square;
+BOOL Move = FALSE;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -51,6 +55,27 @@ void InitializeTime()
 float GetTime()
 {
     return (GetTickCount() - StartTime) / 1000.0f;
+}
+
+// get the cell of the cursor
+POINT GetCell()
+{
+  POINT square = {0};
+
+  // get cursor position
+  GetCursorPos(&pCursor);
+
+  // check if the cursor is in the zone
+  if ((pCursor.x<550) && (pCursor.x>50) && (pCursor.y>130) && (pCursor.y< 530))
+  {
+    //see for the cell
+    float x = ((pCursor.x-50)/40);
+    square.x = floor(x)+1;
+    float y = ((pCursor.y-130)/40)+1;
+    square.y = floor(y)+1;
+  }
+    //printf("\n%c",square.x);
+  return square;
 }
 
 void DrawMatrix(HDC hdc, HWND hWnd)
@@ -428,6 +453,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
 		
 		EndPaint(hWnd, &ps);
+		break;
+
+	case WM_KEYDOWN:
+    pCursor.x = LOWORD(lParam);
+    pCursor.y = HIWORD(lParam);
+    GetCursorPos(&pCursor);
+
+    case WM_LBUTTONDOWN:
+         Move = TRUE;
+	     square = GetCell();
+		 break;
+
+    case WM_MOUSEMOVE:
+		// get coordonate of the square
+		square = GetCell();
+        break;
+
+    case WM_LBUTTONUP:
+		Move = FALSE;
 		break;
 
 	case WM_DESTROY:
