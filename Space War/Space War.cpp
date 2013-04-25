@@ -16,6 +16,10 @@ int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
 HANDLE	hBitBuffer, hBitBack;
 static DWORD StartTime;
+// cursor position of the cursor
+POINT pCursor;
+POINT square;
+BOOL Move = FALSE;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -24,7 +28,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK 		NetworkProc(HWND, UINT, WPARAM, LPARAM);
 
-
+// function for showing time
 void InitializeTime()
 {
     StartTime = GetTickCount();
@@ -35,6 +39,38 @@ float GetTime()
     return (GetTickCount() - StartTime) / 1000.0f;
 }
 
+
+// get the cell of the cursor
+POINT GetCell(){
+	POINT square = {0};
+
+	// get cursor position
+	GetCursorPos(&pCursor);
+
+	// check if the cursor is in the zone
+	if ((pCursor.x<550) && (pCursor.x>50) && (pCursor.y>130) && (pCursor.y< 530)){
+
+		//see for the cell
+		float x = ((pCursor.x-50)/40);
+		square.x = floor(x)+1;
+		float y = ((pCursor.y-130)/40)+1;
+		square.y = floor(y)+1;
+
+		//printf("\n%c",square.x);
+	}
+	return square;
+}
+
+void Draw(HDC hdc, float x, float y, HWND hWnd){
+	HBRUSH hBrush;
+	hBrush = CreateSolidBrush(RGB(85,127,255));
+    SelectObject (hdc, hBrush);
+	if (Move)
+	Rectangle(hdc,x, y,x+50, y+50);
+	UpdateWindow(hWnd);
+}
+
+// draw fight zones
 void DrawMatrix(HDC hdc, HWND hWnd){
 	int i, j;
 	HPEN hPen;
@@ -258,14 +294,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
     );
    
-   hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
-   
-	/*region = CreateRoundRectRgn(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 200, 200);
-	if (!region)
-		return FALSE;
-
-	if (!SetWindowRgn(hWnd, region, FALSE))
-		return FALSE;*/
 
    if (!hWnd)
    {
@@ -437,6 +465,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			RoundRect(hdc, 55, 90, 185, 120, 20, 20 );
 			RoundRect(hdc, 820, 90, 945, 120, 20, 20 );
 
+
 			hFont = CreateFont(25,0,0,0,FW_LIGHT,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
                 CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
 			SelectObject(hdc, hFont);
@@ -454,8 +483,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			rect2.bottom = 150;
 			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
 
-					
+			
 		EndPaint(hWnd, &ps);
+		break;
+	case WM_KEYDOWN:
+		pCursor.x = LOWORD(lParam);
+		pCursor.y = HIWORD(lParam);
+		GetCursorPos(&pCursor);
+
+		case WM_LBUTTONDOWN:
+            Move = TRUE;
+			break;
+
+        case WM_MOUSEMOVE:
+            // DRAW(pCursor.x, pCursor.y)
+			// get coordonate of the square
+			square = GetCell();
+            break;
+
+        case WM_LBUTTONUP:
+			// DRAW(pCursor.x, pCursor.y)
+			Move = FALSE;
 		break;
 
 	case WM_DESTROY:
@@ -496,7 +544,6 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
         case WM_INITDIALOG:
 
 			
-
             break;
 		case WM_CREATE:
 			break;
