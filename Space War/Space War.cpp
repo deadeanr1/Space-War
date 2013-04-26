@@ -373,48 +373,48 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             square.x = floor(x);
             float y = ((pCursor.y-TopZone2)/40);
             square.y = floor(y);
-        }
-
-		if( connectionEstablished )
-		{
-			if( game )
+        
+			if( connectionEstablished )
 			{
-				if( myTurn==1 )
+				if( game )
 				{
-					game->sendState(square.x, square.y, &result);
-					switch( result )
+					if( myTurn==1 )
 					{
-					case -1:			//you missed!
-						myTurn = 0;
-						_stprintf(statusString, _T("You missed!"));
-						break;
-					case -2:			//you hit him!
-						myTurn = 1;
-						enemyTotalCells--;
-						_stprintf(statusString, _T("You hit your enemy!"));
-						break;
-					case -3:			//you destroyed his ship!
-						myTurn = 1;
-						enemyTotalCells--;
-						_stprintf(statusString, _T("You destroyed enemy's ship!"));
-						break;
-					default:
-						break;
-					}
-					if( enemyTotalCells<=0 )
-					{
-						gameIsFinished = 1;
-						EnableWindow(hShuffleButton, TRUE);
-						_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
+						game->sendState(square.x, square.y, &result);
+						switch( result )
+						{
+						case -1:			//you missed!
+							myTurn = 0;
+							_stprintf(statusString, _T("You missed!"));
+							break;
+						case -2:			//you hit him!
+							myTurn = 1;
+							enemyTotalCells--;
+							_stprintf(statusString, _T("You hit your enemy!"));
+							break;
+						case -3:			//you destroyed his ship!
+							myTurn = 1;
+							enemyTotalCells--;
+							_stprintf(statusString, _T("You destroyed enemy's ship!"));
+							break;
+						default:
+							break;
+						}
+						if( enemyTotalCells<=0 )
+						{
+							gameIsFinished = 1;
+							EnableWindow(hShuffleButton, TRUE);
+							_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
+							InvalidateRect(hMainWnd, NULL, TRUE);
+						}
+						enemy_map.at(square.y).at(square.x) = -2;
 						InvalidateRect(hMainWnd, NULL, TRUE);
 					}
-					enemy_map.at(square.y).at(square.x) = -2;
-					InvalidateRect(hMainWnd, NULL, TRUE);
-				}
-				if( myTurn==0 )
-				{
-					_stprintf(statusString, _T("Waiting for enemy's attack..."));
-					InvalidateRect(hMainWnd, NULL, TRUE);
+					if( myTurn==0 )
+					{
+						_stprintf(statusString, _T("Waiting for enemy's attack..."));
+						InvalidateRect(hMainWnd, NULL, TRUE);
+					}
 				}
 			}
 		}
