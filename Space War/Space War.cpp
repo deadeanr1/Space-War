@@ -135,17 +135,35 @@ void DrawMatrix(HDC hdc, HWND hWnd)
         LineTo(hdc, LeftZone1+40*i, BottomZone1);
     }
 
-	//Draw ships
+	//Draw ships(with green)
 	hBrush = CreateSolidBrush(RGB(0, 255, 0));
 	SelectObject(hdc, hBrush);
 	int left, top, right, bottom;
 	for(size_t i=0; i<ships.size(); i++)
 	{
-		left = LeftZone1+40*ships.at(i).x1;
-		top = TopZone1+40*ships.at(i).y1;
-		right = LeftZone1+40*(ships.at(i).x2+1);
-		bottom = TopZone1+40*(ships.at(i).y2+1);
+		left = LeftZone1+40*ships.at(i).y1;
+		top = TopZone1+40*ships.at(i).x1;
+		right = LeftZone1+40*(ships.at(i).y2+1);
+		bottom = TopZone1+40*(ships.at(i).x2+1);
 		Rectangle(hdc, left, top, right, bottom);
+	}
+
+	//Draw bombed zones(with red)
+	hBrush = CreateSolidBrush(RGB(255, 0, 0));
+	SelectObject(hdc, hBrush);
+	for(size_t i=0; i<map.size(); i++)
+	{
+		for(size_t j=0; j<map.at(i).size(); j++)
+		{
+			if( map.at(i).at(j)==-2 )
+			{
+				left = LeftZone1+40*j;
+				top = TopZone1+40*i;
+				right = LeftZone1+40*(j+1);
+				bottom = TopZone1+40*(i+1);
+				Rectangle(hdc, left, top, right, bottom);
+			}
+		}
 	}
 
     // prepare the color
@@ -591,6 +609,9 @@ void shuffleMap(vector<vector<int> > &map, vector<Battleship> &ships)
         }
         ships.at(i) = B[i];
     }
+
+	//Test!
+	map.at(1).at(2) = map.at(4).at(6) = -2;
 
     enemy_map.clear();
     enemy_map.resize(10);
