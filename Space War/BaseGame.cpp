@@ -3,8 +3,6 @@
 #include "stdafx.h"
 
 BaseGame::BaseGame()
-	: map(NULL),
-	  ships(NULL)
 {
 }
 

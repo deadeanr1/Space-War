@@ -141,34 +141,62 @@ int PvPGame::receiveState(int *x, int *y)
 	}
 	*x = msg.i;
 	*y = msg.j;
-	//Check if he hit us? 
-	int result = 0;
-	int ship = map->at(msg.i).at(msg.j);
-	switch( ship )
-	{
-	case -1:
-		result = 0; //He missed! Ha! Looser!
-		break;
-	case -2:
-		result = 0; //Already used location! Dumbass!
-		break;
-	default:
-		if( ship >=0 && ship < ships->size() )
-		{
-			result = true;	//He hit us! Bastard!
-			map->at(msg.i).at(msg.j) = -2; //Location bombed!
-		}
-		else
-		{
-			result = false; //undefined location
-		}
-		break;
-	}
-	
-	//Let him know
-	nRemainSend = sizeof(bool);
+
+	return 0;
+	////Check if he hit us? 
+	//int result = 0;
+	//int ship = map->at(msg.i).at(msg.j);
+	//switch( ship )
+	//{
+	//case -1:
+	//	result = 0; //He missed! Ha! Looser!
+	//	break;
+	//case -2:
+	//	result = 0; //Already used location! Dumbass!
+	//	break;
+	//default:
+	//	if( ship >=0 && ship < ships->size() )
+	//	{
+	//		result = true;	//He hit us! Bastard!
+	//		map->at(msg.i).at(msg.j) = -2; //Location bombed!
+	//	}
+	//	else
+	//	{
+	//		result = false; //undefined location
+	//	}
+	//	break;
+	//}
+	//
+	////Let him know
+	//nRemainSend = sizeof(bool);
+	//pBuffer = (LPBYTE)&result;
+	//disconnect = 0;
+	//while( nRemainSend > 0 && !disconnect )
+	//{
+	//	if( workAsServer )
+	//	{
+	//		nXfer = send(servSock, (char*)pBuffer, nRemainSend, 0);
+	//	}
+	//	else
+	//	{
+	//		nXfer = send(sock, (char*)pBuffer, nRemainSend, 0);
+	//	}
+	//	if( nXfer == SOCKET_ERROR ) return 1;
+	//	disconnect = (nXfer==0);
+	//	nRemainSend -= nXfer;
+	//	pBuffer += nXfer;
+	//}
+	//return 0;
+}
+
+int PvPGame::sendResult(int result)
+{
+	DWORD disconnect = 0;
+	LONG32 nRemainRecv = 0, nXfer, nRemainSend = 0;
+	LPBYTE pBuffer;
+
+	nRemainSend = sizeof(int);
 	pBuffer = (LPBYTE)&result;
-	disconnect = 0;
 	while( nRemainSend > 0 && !disconnect )
 	{
 		if( workAsServer )

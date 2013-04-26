@@ -7,8 +7,6 @@
 
 using namespace std;
 
-#define MAP_SIZE 10
-
 class BaseGame
 {
 public:
@@ -18,11 +16,8 @@ public:
 	virtual void init() = 0;	
 	virtual int sendState(int x, int y, int *result) = 0;
 	virtual int receiveState(int *x, int *y) = 0;
+	virtual int sendResult(int result) = 0;
 	virtual void close() = 0;
-
-protected:
-	vector<vector<int>> *map;	//map of my battleships
-	vector<Battleship>  *ships;	//where my ships are located
 };
 
 #endif //BASEGAME_H

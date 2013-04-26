@@ -32,16 +32,22 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK       NetworkProc(HWND, UINT, WPARAM, LPARAM);
 
 BaseGame*	game = NULL;
-DWORD ipAddress = 0;
-char ipAddr[20];
+int	myTotalCells = 20;
+int enemyTotalCells = 20;
 vector<vector<int>> map;		//map of my battleships
 vector<Battleship>  ships;		//where my ships are located
 vector<vector<int>> enemy_map;	//map of enemy's battleships
-
+//bool	myTurn;
 volatile static unsigned int connectionEstablished = 0;
+volatile static unsigned int gameIsFinished = 0;
+volatile static unsigned int myTurn = 0;
 DWORD threadID = 0;
+DWORD recThreadID = 0;
 DWORD WINAPI CreatePvPGame(LPVOID );
 DWORD WINAPI ConnectToPvPGame(LPVOID );
+DWORD WINAPI ReceiveLoop(LPVOID );
+DWORD ipAddress = 0;
+char ipAddr[20];
 
 void DrawMatrix(HDC hdc, HWND hWnd);
 
@@ -113,51 +119,51 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-   RECT rect;
-   DWORD style;
-   HRGN region;
-   HBITMAP hwater;
+	HWND hWnd;  
+	RECT rect;
+	DWORD style;
+	HRGN region;
+	HBITMAP hwater;
 
-   rect.left = 140;                                //x
-   rect.top = 10;                                //y
-   rect.right = rect.left + WINDOW_WIDTH;        //width
-   rect.bottom = rect.top + WINDOW_HEIGHT;        //height
+	rect.left = 140;                                //x
+	rect.top = 10;                                //y
+	rect.right = rect.left + WINDOW_WIDTH;        //width
+	rect.bottom = rect.top + WINDOW_HEIGHT;        //height
 
 
-   hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance; // Store instance handle in our global variable
 
-   style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
-        WS_MINIMIZEBOX | WS_CLIPCHILDREN;
+	style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
+			WS_MINIMIZEBOX | WS_CLIPCHILDREN;
   
 
-   hWnd = CreateWindow(
-        szWindowClass,          // (opt) classname
-        szTitle,                // (opt) The window name
-        WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,    // The style of the window being created.
-        rect.left, 
-        rect.top,
-        rect.right-rect.left,   // width of the window
-        rect.bottom-rect.top,   // hight vertical position of the window.
-        NULL,                   // (opt) handle to the parent or owner window of the window being created
-        NULL,                   // (opt) handle to a menu
-        hInstance,              // (opt) handle to the instance of the module to be associated with the window.
-        NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
-    );
+	hWnd = CreateWindow(
+			szWindowClass,          // (opt) classname
+			szTitle,                // (opt) The window name
+			WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,    // The style of the window being created.
+			rect.left, 
+			rect.top,
+			rect.right-rect.left,   // width of the window
+			rect.bottom-rect.top,   // hight vertical position of the window.
+			NULL,                   // (opt) handle to the parent or owner window of the window being created
+			NULL,                   // (opt) handle to a menu
+			hInstance,              // (opt) handle to the instance of the module to be associated with the window.
+			NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
+		);
    
-   hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
+	hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if(!hWnd)
+	{
+		return FALSE; 
+	}
+ 
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	hMainWnd = hWnd;
 
-   hMainWnd = hWnd;
-
-   return TRUE;
+	return TRUE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -175,6 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT rect;
     int ret;
     POINT square = {0};
+	int result = 0;
     
     switch (message)
     {
@@ -186,17 +193,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         hShuffleButton=CreateWindowEx(NULL,
-                L"BUTTON",
-                L"Shuffle",          
-                WS_CHILD | WS_VISIBLE | ES_CENTER,
-                350,              
-                105,              
-                80,               
-                20,               
-                hWnd,              
-                (HMENU)IDC_MAIN_BUTTON,
-                GetModuleHandle(NULL),
-                NULL);              
+										L"BUTTON",
+										L"Shuffle",          
+										WS_CHILD | WS_VISIBLE | ES_CENTER,
+										350,              
+										105,              
+										80,               
+										20,               
+										hWnd,              
+										(HMENU)IDC_MAIN_BUTTON,
+										GetModuleHandle(NULL),
+										NULL);              
 
         shuffleMap(map, ships, enemy_map);
 
@@ -367,6 +374,50 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             float y = ((pCursor.y-TopZone2)/40);
             square.y = floor(y);
         }
+
+		if( connectionEstablished )
+		{
+			if( game )
+			{
+				if( myTurn==1 )
+				{
+					game->sendState(square.x, square.y, &result);
+					switch( result )
+					{
+					case -1:			//you missed!
+						myTurn = 0;
+						_stprintf(statusString, _T("You missed!"));
+						break;
+					case -2:			//you hit him!
+						myTurn = 1;
+						enemyTotalCells--;
+						_stprintf(statusString, _T("You hit your enemy!"));
+						break;
+					case -3:			//you destroyed his ship!
+						myTurn = 1;
+						enemyTotalCells--;
+						_stprintf(statusString, _T("You destroyed enemy's ship!"));
+						break;
+					default:
+						break;
+					}
+					if( enemyTotalCells<=0 )
+					{
+						gameIsFinished = 1;
+						EnableWindow(hShuffleButton, TRUE);
+						_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
+						InvalidateRect(hMainWnd, NULL, TRUE);
+					}
+					enemy_map.at(square.y).at(square.x) = -2;
+					InvalidateRect(hMainWnd, NULL, TRUE);
+				}
+				if( myTurn==0 )
+				{
+					_stprintf(statusString, _T("Waiting for enemy's attack..."));
+					InvalidateRect(hMainWnd, NULL, TRUE);
+				}
+			}
+		}
         break;
     case WM_LBUTTONUP:
         Move = FALSE;
@@ -562,11 +613,33 @@ void DrawMatrix(HDC hdc, HWND hWnd)
         MoveToEx(hdc, LeftZone2+40*i, TopZone2, NULL);
         LineTo(hdc, LeftZone2+40*i, BottomZone2);
     }
+
+	//Draw bombed zones(with red)
+	hBrush = CreateSolidBrush(RGB(255, 0, 0));
+	SelectObject(hdc, hBrush);
+	for(size_t i=0; i<enemy_map.size(); i++)
+	{
+		for(size_t j=0; j<enemy_map.at(i).size(); j++)
+		{
+			if( enemy_map.at(i).at(j)==-2 )
+			{
+				left = LeftZone2+40*j;
+				top = TopZone2+40*i;
+				right = LeftZone2+40*(j+1);
+				bottom = TopZone2+40*(i+1);
+				Rectangle(hdc, left, top, right, bottom);
+			}
+		}
+	}
 }
 
 DWORD WINAPI CreatePvPGame(LPVOID )
 {
 	int result = 0;
+	myTurn = 1;
+	myTotalCells = 20;
+	enemyTotalCells = 20;
+	//Update status
 	_stprintf(statusString, _T("Waiting for connection..."));
 	InvalidateRect(hMainWnd, NULL, TRUE);
 	EnableWindow(hShuffleButton, FALSE);
@@ -578,14 +651,21 @@ DWORD WINAPI CreatePvPGame(LPVOID )
 	{
 		InterlockedIncrement(&connectionEstablished);
 	}
-	_stprintf(statusString, _T("Connected!"));
+	//Update status
+	_stprintf(statusString, _T("Connected! Drop a bomb on your enemy's map!"));
 	InvalidateRect(hMainWnd, NULL, TRUE);
+	//Start receiving loop in a separate thread
+	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
 	return 0;
 }
 
 DWORD WINAPI ConnectToPvPGame(LPVOID )
 {
 	int result = 0;
+	myTurn = 0;
+	myTotalCells = 20;
+	enemyTotalCells = 20;
+	//Update status
 	_stprintf(statusString, _T("Connecting to server..."));
 	InvalidateRect(hMainWnd, NULL, TRUE);
 	EnableWindow(hShuffleButton, FALSE);
@@ -597,7 +677,68 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 	{
 		InterlockedIncrement(&connectionEstablished);
 	}
-	_stprintf(statusString, _T("Connected!"));
+	//Update status
+	_stprintf(statusString, _T("Connected! Your opponents attacks! Hold On"));
 	InvalidateRect(hMainWnd, NULL, TRUE);
+	//Start receiving loop in a separate thread
+	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
+	return 0;
+}
+
+DWORD WINAPI ReceiveLoop(LPVOID )
+{
+	int x=-1, y=-1;
+	while( gameIsFinished!=1 )
+	{
+		if( game )
+		{
+			if( !myTurn )
+			{
+				game->receiveState(&x, &y);
+				if( x>=0 && x<10 && y>=0 && y<10 )
+				{
+					switch(map.at(y).at(x))
+					{
+					case -1:
+						game->sendResult(-1);
+						map.at(y).at(x) = -2;	//make this location already bombed
+						myTurn = true;
+						_stprintf(statusString, _T("Enemy missed! You attack!"));
+						InvalidateRect(hMainWnd, NULL, TRUE);
+						break;
+					case -2:
+						game->sendResult(-1);
+						_stprintf(statusString, _T("Enemy missed! You attack!"));
+						InvalidateRect(hMainWnd, NULL, TRUE);
+						myTurn = true;
+						break;
+					default:
+						myTurn = false;							//enemy hit us, he attacks again :(
+						ships.at( map.at(y).at(x) ).health--;	//decrement ships health
+						
+						if( ships.at( map.at(y).at(x) ).health<=0 )
+						{
+							game->sendResult(-3);				//he destroyed my ship
+						}
+						else
+						{
+							game->sendResult(-2);				//he hit my ship
+						}
+						map.at(y).at(x) = -2;					//now this cell is bombed
+
+						myTotalCells--;			
+						if( myTotalCells<=0 )
+						{
+							gameIsFinished = 1;
+							EnableWindow(hShuffleButton, TRUE);
+							_stprintf(statusString, _T("You loose! Start a new game or shuffle!"));
+							InvalidateRect(hMainWnd, NULL, TRUE);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
 	return 0;
 }
