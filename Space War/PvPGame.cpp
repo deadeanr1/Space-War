@@ -1,5 +1,7 @@
 #include "PvPGame.h"
 
+#include "stdafx.h"
+
 PvPGame::PvPGame()
 	: workAsServer(true),
 	sock(INVALID_SOCKET),
@@ -141,7 +143,7 @@ int PvPGame::receiveState(int *x, int *y)
 	*y = msg.j;
 	//Check if he hit us? 
 	int result = 0;
-	int ship = map.at(msg.i).at(msg.j);
+	int ship = map->at(msg.i).at(msg.j);
 	switch( ship )
 	{
 	case -1:
@@ -151,10 +153,10 @@ int PvPGame::receiveState(int *x, int *y)
 		result = 0; //Already used location! Dumbass!
 		break;
 	default:
-		if( ship >=0 && ship < ships.size() )
+		if( ship >=0 && ship < ships->size() )
 		{
 			result = true;	//He hit us! Bastard!
-			map.at(msg.i).at(msg.j) = -2; //Location bombed!
+			map->at(msg.i).at(msg.j) = -2; //Location bombed!
 		}
 		else
 		{

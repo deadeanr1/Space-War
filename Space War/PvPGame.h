@@ -1,8 +1,6 @@
 #ifndef PVPGAME_H
 #define PVPGAME_H
 
-#include "stdafx.h"
-
 #pragma comment(lib, "ws2_32.lib")
 
 #include "BaseGame.h"

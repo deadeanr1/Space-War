@@ -25,8 +25,8 @@
 #include <time.h>
 
 // Local Header Files
-//#include "BaseGame.h"
-//#include "PvPGame.h"
+#include "BaseGame.h"
+#include "PvPGame.h"
 
 
 // TODO: reference additional headers your program requires here
