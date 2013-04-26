@@ -100,8 +100,8 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     SelectObject (hdc, hPen);
     SelectObject (hdc, hBrush);
 
-    Rectangle(hdc,40, 100,461, 542);
-    Rectangle(hdc,40, 80,160, 120);
+    Rectangle(hdc,40, 100, 461, 542);
+    Rectangle(hdc,40, 80, 160, 120);
     
     // Triangle
     int lpPts[] = { 3 };
@@ -128,11 +128,25 @@ void DrawMatrix(HDC hdc, HWND hWnd)
         LineTo(hdc, RightZone1, TopZone1+40*i);
     }
     
+	//vertical lines
     for (int i=1; i<10; i++)
     {
         MoveToEx(hdc, LeftZone1+40*i, TopZone1, NULL);
         LineTo(hdc, LeftZone1+40*i, BottomZone1);
     }
+
+	//Draw ships
+	hBrush = CreateSolidBrush(RGB(0, 255, 0));
+	SelectObject(hdc, hBrush);
+	int left, top, right, bottom;
+	for(size_t i=0; i<ships.size(); i++)
+	{
+		left = LeftZone1+40*ships.at(i).x1;
+		top = TopZone1+40*ships.at(i).y1;
+		right = LeftZone1+40*(ships.at(i).x2+1);
+		bottom = TopZone1+40*(ships.at(i).y2+1);
+		Rectangle(hdc, left, top, right, bottom);
+	}
 
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
@@ -336,6 +350,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if((HWND)lParam == ShuffleButton)
         {
             shuffleMap(map, ships);
+			InvalidateRect(hWnd, NULL, TRUE);
         }
 
         // Parse the menu selections:
