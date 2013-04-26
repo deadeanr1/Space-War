@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame.h" />
+    <ClInclude Include="PvCGame.h" />
     <ClInclude Include="PvPGame.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Space War.h" />
@@ -90,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame.cpp" />
+    <ClCompile Include="PvCGame.cpp" />
     <ClCompile Include="PvPGame.cpp" />
     <ClCompile Include="Space War.cpp" />
     <ClCompile Include="stdafx.cpp">
