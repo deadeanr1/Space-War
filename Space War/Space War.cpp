@@ -3,28 +3,28 @@
 
 #include "stdafx.h"
 #include "Space War.h"
-#define	  LeftZone1  50
-#define	  RightZone1 450
+#define      LeftZone1  50
+#define      RightZone1 450
 #define   TopZone1   130
-#define	  BottomZone1 530
-#define	  LeftZone2  549
-#define	  RightZone2 949
+#define      BottomZone1 530
+#define      LeftZone2  549
+#define      RightZone2 949
 #define   TopZone2   130
-#define	  BottomZone2 530
+#define      BottomZone2 530
 
 #define MAX_LOADSTRING 100
 
 using namespace std;
 
 // Global Variables:
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The name of player
-TCHAR szplayer[MAX_LOADSTRING] = L"Player";		// The name of ememy
-TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";		// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HINSTANCE hInst;                                // current instance
+TCHAR szTitle[MAX_LOADSTRING];                    // The name of player
+TCHAR szplayer[MAX_LOADSTRING] = L"Player";        // The name of ememy
+TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";        // The title bar text
+TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 int WINDOW_WIDTH = 1000;
 int WINDOW_HEIGHT = 700;
-HANDLE	hBitBuffer, hBitBack;
+HANDLE    hBitBuffer, hBitBack;
 static DWORD StartTime;
 // cursor position of the cursor
 POINT pCursor;
@@ -32,24 +32,24 @@ POINT square;
 BOOL Move = FALSE;
 
 // Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-BOOL CALLBACK 		NetworkProc(HWND, UINT, WPARAM, LPARAM);
+ATOM                MyRegisterClass(HINSTANCE hInstance);
+BOOL                InitInstance(HINSTANCE, int);
+LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK         NetworkProc(HWND, UINT, WPARAM, LPARAM);
 
 struct Battleship
 {
-	int totalHealth;
-	int health;
-	int textureType;
+    int totalHealth;
+    int health;
+    int textureType;
     int x1, y1, x2, y2;
 };
 
 DWORD ipAddress = 0;
 char ipAddr[20];
-vector<vector<int>> map;	//map of my battleships
-vector<Battleship>  ships;	//where my ships are located
+vector<vector<int>> map;    //map of my battleships
+vector<Battleship>  ships;    //where my ships are located
 vector<vector<int>> enemy_map; //map of enemy's battleships
 
 void shuffleMap(vector<vector<int> > &map, vector<Battleship> &ships);
@@ -88,94 +88,94 @@ POINT GetCell()
 
 void DrawMatrix(HDC hdc, HWND hWnd)
 {
-	int i, j;
-	HPEN hPen;
+    int i, j;
+    HPEN hPen;
     HBRUSH hBrush;
-	POINT Pt[4];
-	int RGB = RGB(82,90,90);
+    POINT Pt[4];
+    int RGB = RGB(82,90,90);
 
-	// 1st Zone1
+    // 1st Zone1
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
     hBrush = CreateSolidBrush(RGB);
     SelectObject (hdc, hPen);
     SelectObject (hdc, hBrush);
 
-	Rectangle(hdc,40, 100,461, 542);
-	Rectangle(hdc,40, 80,160, 120);
-	
-	// Triangle
-	int lpPts[] = { 3 };
-	Pt[0].x = 160;
-	Pt[0].y = 80;
-	Pt[1].x = 140;
-	Pt[1].y = 120;
-	Pt[2].x = 260;
-	Pt[2].y = 120;
-	PolyPolygon(hdc, Pt, lpPts, 1);
+    Rectangle(hdc,40, 100,461, 542);
+    Rectangle(hdc,40, 80,160, 120);
+    
+    // Triangle
+    int lpPts[] = { 3 };
+    Pt[0].x = 160;
+    Pt[0].y = 80;
+    Pt[1].x = 140;
+    Pt[1].y = 120;
+    Pt[2].x = 260;
+    Pt[2].y = 120;
+    PolyPolygon(hdc, Pt, lpPts, 1);
 
-	//water
-	hBrush = CreateSolidBrush(RGB(85,127,255));
+    //water
+    hBrush = CreateSolidBrush(RGB(85,127,255));
     SelectObject (hdc, hBrush);
     Rectangle(hdc,47, 127,454, 535);
 
     //horizontal lines
-	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
-	SelectObject (hdc, hPen);
+    hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
+    SelectObject (hdc, hPen);
 
     for (int i=1; i<10; i++)
-	{
+    {
         MoveToEx(hdc, LeftZone1, TopZone1+40*i, NULL);
         LineTo(hdc, RightZone1, TopZone1+40*i);
     }
-	
-	for (int i=1; i<10; i++)
-	{
+    
+    for (int i=1; i<10; i++)
+    {
         MoveToEx(hdc, LeftZone1+40*i, TopZone1, NULL);
-		LineTo(hdc, LeftZone1+40*i, BottomZone1);
+        LineTo(hdc, LeftZone1+40*i, BottomZone1);
     }
 
 
-	// 2nd zone
+    // 2nd zone
     // prepare the color
     hPen = CreatePen (PS_SOLID, 6,RGB);
     hBrush = CreateSolidBrush(RGB);
     SelectObject (hdc, hPen);
     SelectObject (hdc, hBrush);
 
-	Rectangle(hdc,539, 100,960, 542);
-	Rectangle(hdc,840, 80,960, 120);
-	
+    Rectangle(hdc,539, 100,960, 542);
+    Rectangle(hdc,840, 80,960, 120);
+    
 
-	// Triangle
-	int lpPts2[] = { 3 };
-	Pt[0].x = 838;
-	Pt[0].y = 80; 
-	Pt[1].x = 840;
-	Pt[1].y = 120;
-	Pt[2].x = 720;
-	Pt[2].y = 120;
-	PolyPolygon(hdc, Pt, lpPts, 1);
+    // Triangle
+    int lpPts2[] = { 3 };
+    Pt[0].x = 838;
+    Pt[0].y = 80; 
+    Pt[1].x = 840;
+    Pt[1].y = 120;
+    Pt[2].x = 720;
+    Pt[2].y = 120;
+    PolyPolygon(hdc, Pt, lpPts, 1);
 
-	//water
-	hBrush = CreateSolidBrush(RGB(85,127,255));
+    //water
+    hBrush = CreateSolidBrush(RGB(85,127,255));
     SelectObject (hdc, hBrush);
 
-	Rectangle(hdc,546, 127,953, 535);
+    Rectangle(hdc,546, 127,953, 535);
 
     //horizontal lines
-	hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
-	SelectObject (hdc, hPen);
+    hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
+    SelectObject (hdc, hPen);
     for (int i=1; i<10; i++)
-	{
+    {
         MoveToEx(hdc, LeftZone2, TopZone2+40*i, NULL);
         LineTo(hdc, RightZone2, TopZone2+40*i);
     }
-	
-	for (int i=1; i<10; i++)
-	{
+    
+    for (int i=1; i<10; i++)
+    {
         MoveToEx(hdc, LeftZone2+40*i, TopZone2, NULL);
-		LineTo(hdc, LeftZone2+40*i, BottomZone2);
+        LineTo(hdc, LeftZone2+40*i, BottomZone2);
     }
 }
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -183,65 +183,65 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
-	MSG msg;
-	HACCEL hAccelTable;
+     // TODO: Place code here.
+    MSG msg;
+    HACCEL hAccelTable;
 
-	// Initialize global strings
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_SPACEWAR, szWindowClass, MAX_LOADSTRING);
-	MyRegisterClass(hInstance);
+    // Initialize global strings
+    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    LoadString(hInstance, IDC_SPACEWAR, szWindowClass, MAX_LOADSTRING);
+    MyRegisterClass(hInstance);
 
-	//loading the background
-	hBitBack = LoadImage(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND), IMAGE_BITMAP, 
-		WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-	hInst = hInstance;
-	if (!hBitBack)
-		return FALSE;
+    //loading the background
+    hBitBack = LoadImage(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND), IMAGE_BITMAP, 
+        WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+    hInst = hInstance;
+    if (!hBitBack)
+        return FALSE;
 
-	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow))
-	{
-		return FALSE;
-	}
+    // Perform application initialization:
+    if (!InitInstance (hInstance, nCmdShow))
+    {
+        return FALSE;
+    }
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SPACEWAR));
+    hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SPACEWAR));
 
-	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+    // Main message loop:
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
 
-	return (int) msg.wParam;
+    return (int) msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
-	WNDCLASSEX wcex;
+    WNDCLASSEX wcex;
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW | CS_DROPSHADOW;
-	wcex.lpfnWndProc	= WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SPACEWAR));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_SPACEWAR);
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style            = CS_HREDRAW | CS_VREDRAW | CS_DROPSHADOW;
+    wcex.lpfnWndProc    = WndProc;
+    wcex.cbClsExtra        = 0;
+    wcex.cbWndExtra        = 0;
+    wcex.hInstance        = hInstance;
+    wcex.hIcon            = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_SPACEWAR));
+    wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground    = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszMenuName    = MAKEINTRESOURCE(IDC_SPACEWAR);
+    wcex.lpszClassName    = szWindowClass;
+    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-	return RegisterClassEx(&wcex);
+    return RegisterClassEx(&wcex);
 }
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
@@ -252,22 +252,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HRGN region;
    HBITMAP hwater;
 
-   rect.left = 140;								//x
-   rect.top = 10;								//y
-   rect.right = rect.left + WINDOW_WIDTH;		//width
-   rect.bottom = rect.top + WINDOW_HEIGHT;		//height
+   rect.left = 140;                                //x
+   rect.top = 10;                                //y
+   rect.right = rect.left + WINDOW_WIDTH;        //width
+   rect.bottom = rect.top + WINDOW_HEIGHT;        //height
 
 
    hInst = hInstance; // Store instance handle in our global variable
 
    style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
-		WS_MINIMIZEBOX | WS_CLIPCHILDREN;
+        WS_MINIMIZEBOX | WS_CLIPCHILDREN;
   
 
    hWnd = CreateWindow(
         szWindowClass,          // (opt) classname
         szTitle,                // (opt) The window name
-        WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,	// The style of the window being created.
+        WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,    // The style of the window being created.
         rect.left, 
         rect.top,
         rect.right-rect.left,   // width of the window
@@ -293,308 +293,308 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int wmId, wmEvent;
-	PAINTSTRUCT ps;
-	static HDC hdc, hdcMem;
+    int wmId, wmEvent;
+    PAINTSTRUCT ps;
+    static HDC hdc, hdcMem;
     // A bitmap handle for the double buffring
     static HBITMAP hbmMem;
     // A handle of old memory context
     static HANDLE hOld;
-	static HWND ShuffleButton;
+    static HWND ShuffleButton;
 
-	HDC memhdc;
-	HBITMAP hbitmp;
-	RECT rect;
-	int ret;
-	POINT square = {0};
-	
-	switch (message)
-	{
-	case WM_TIMER:
-		if (wParam == 1)
-		{
-			InvalidateRect(hWnd, NULL, FALSE);
-		}
-		break;
-	case WM_CREATE:
-		ShuffleButton=CreateWindowEx(NULL,
-				L"BUTTON",
-				L"Shuffle",          
-				WS_CHILD | WS_VISIBLE | ES_CENTER,
-				350,              
-		        105,              
+    HDC memhdc;
+    HBITMAP hbitmp;
+    RECT rect;
+    int ret;
+    POINT square = {0};
+    
+    switch (message)
+    {
+    case WM_TIMER:
+        if (wParam == 1)
+        {
+            InvalidateRect(hWnd, NULL, FALSE);
+        }
+        break;
+    case WM_CREATE:
+        ShuffleButton=CreateWindowEx(NULL,
+                L"BUTTON",
+                L"Shuffle",          
+                WS_CHILD | WS_VISIBLE | ES_CENTER,
+                350,              
+                105,              
                 80,               
                 20,               
-				hWnd,	          
-				(HMENU)IDC_MAIN_BUTTON,
-				GetModuleHandle(NULL),
-				NULL);		      
+                hWnd,              
+                (HMENU)IDC_MAIN_BUTTON,
+                GetModuleHandle(NULL),
+                NULL);              
 
-		shuffleMap(map, ships);
-		break;
-	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
+        shuffleMap(map, ships);
+        break;
+    case WM_COMMAND:
+        wmId    = LOWORD(wParam);
+        wmEvent = HIWORD(wParam);
 
-		if((HWND)lParam == ShuffleButton)
-		{
-			shuffleMap(map, ships);
-		}
+        if((HWND)lParam == ShuffleButton)
+        {
+            shuffleMap(map, ships);
+        }
 
-		// Parse the menu selections:
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-			
-		case IDM_EXIT:
-			DestroyWindow(hWnd);
-			break;
+        // Parse the menu selections:
+        switch (wmId)
+        {
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+            
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
 
-		case ID_SETTINGS_NETWORKSETTINGS: 
-			ret = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
+        case ID_SETTINGS_NETWORKSETTINGS: 
+            ret = DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_NETWORK), hWnd, NetworkProc);
                
-			InvalidateRect(hWnd, NULL, FALSE);
-			
-			if(ret == -1)
-			{
-				MessageBox(hWnd, L"Dialog failed!", L"Error", MB_OK | MB_ICONINFORMATION);   
-			}	   
-			break;
-		case ID_NEWGAME_VERSUSCOMPUTER:
-			MessageBox(0, _T("vs. Comp"), 0, 0);
-			break;
-		case ID_VS_CREATEGAME:
-			MessageBox(0, _T("waiting for connection"), 0, 0);
-			break;
-		case ID_VS_CONNECTTOGAME:
-			MessageBox(0, _T("Connecting to server"), 0, 0);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-		break;
+            InvalidateRect(hWnd, NULL, FALSE);
+            
+            if(ret == -1)
+            {
+                MessageBox(hWnd, L"Dialog failed!", L"Error", MB_OK | MB_ICONINFORMATION);   
+            }       
+            break;
+        case ID_NEWGAME_VERSUSCOMPUTER:
+            MessageBox(0, _T("vs. Comp"), 0, 0);
+            break;
+        case ID_VS_CREATEGAME:
+            MessageBox(0, _T("waiting for connection"), 0, 0);
+            break;
+        case ID_VS_CONNECTTOGAME:
+            MessageBox(0, _T("Connecting to server"), 0, 0);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+        break;
 
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		HDC		hdc_buf, hdc_temp;
-		HGDIOBJ	temp;
-		static HBITMAP hbmp, hback, hwater;
-		BITMAP  bitmap;
-		static int cxSource, cySource;
-		HDC hdc, hdcMem, hdcMem2;
-		HPEN Pen;
-		PAINTSTRUCT ps;
-		HFONT hFont;
-		RECT rect, rect1, rect2;
-		HBRUSH hBrush;
+    case WM_PAINT:
+        hdc = BeginPaint(hWnd, &ps);
+        HDC        hdc_buf, hdc_temp;
+        HGDIOBJ    temp;
+        static HBITMAP hbmp, hback, hwater;
+        BITMAP  bitmap;
+        static int cxSource, cySource;
+        HDC hdc, hdcMem, hdcMem2;
+        HPEN Pen;
+        PAINTSTRUCT ps;
+        HFONT hFont;
+        RECT rect, rect1, rect2;
+        HBRUSH hBrush;
 
-			hdc = BeginPaint(hWnd, &ps);
-			hbmp = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_BACKGROUND));
-			GetObject( hbmp, sizeof(BITMAP), &bitmap);
+            hdc = BeginPaint(hWnd, &ps);
+            hbmp = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_BACKGROUND));
+            GetObject( hbmp, sizeof(BITMAP), &bitmap);
 
-			hdc = GetDC(hWnd);
-			hdcMem = CreateCompatibleDC (hdc) ;
-			SelectObject (hdcMem, hbmp) ;
-			DrawMatrix(hdcMem, hWnd);
-			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
-			DeleteDC(hdcMem);
-	        DeleteObject(hbmp);
-		
-			rect.top = 550;
-			rect.left = 100;
-			rect.right = 650;
-			rect.bottom = 650;
-			hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+            hdc = GetDC(hWnd);
+            hdcMem = CreateCompatibleDC (hdc) ;
+            SelectObject (hdcMem, hbmp) ;
+            DrawMatrix(hdcMem, hWnd);
+            BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
+            DeleteDC(hdcMem);
+            DeleteObject(hbmp);
+        
+            rect.top = 550;
+            rect.left = 100;
+            rect.right = 650;
+            rect.bottom = 650;
+            hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
                 CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
-			SelectObject(hdc, hFont);
-			SetBkMode (hdc, TRANSPARENT) ;
-			SetTextColor(hdc, RGB(255,255,255));
-			DrawText (hdc, L"Ships", -1, &rect, DT_SINGLELINE) ;
+            SelectObject(hdc, hFont);
+            SetBkMode (hdc, TRANSPARENT) ;
+            SetTextColor(hdc, RGB(255,255,255));
+            DrawText (hdc, L"Ships", -1, &rect, DT_SINGLELINE) ;
 
-			rect1.top = 550;
-			rect1.left = 850;
-			rect1.right = 920;
-			rect1.bottom = 650;
-			DrawText (hdc, L"Ships", -1, &rect1, DT_SINGLELINE) ;
+            rect1.top = 550;
+            rect1.left = 850;
+            rect1.right = 920;
+            rect1.bottom = 650;
+            DrawText (hdc, L"Ships", -1, &rect1, DT_SINGLELINE) ;
 
-			rect2.top = 600;
-			rect2.left = 310;
-			rect2.right = 400;
-			rect2.bottom = 680;
-			DrawText (hdc, L"SCORE", -1, &rect2, DT_SINGLELINE) ;
+            rect2.top = 600;
+            rect2.left = 310;
+            rect2.right = 400;
+            rect2.bottom = 680;
+            DrawText (hdc, L"SCORE", -1, &rect2, DT_SINGLELINE) ;
 
-			rect2.top = 600;
-			rect2.left = 610;
-			rect2.right = 700;
-			rect2.bottom = 680;
-			DrawText (hdc, L"TIME", -1, &rect2, DT_SINGLELINE) ;
+            rect2.top = 600;
+            rect2.left = 610;
+            rect2.right = 700;
+            rect2.bottom = 680;
+            DrawText (hdc, L"TIME", -1, &rect2, DT_SINGLELINE) ;
 
-			rect2.top = 40;
-			rect2.left = 380;
-			rect2.right = 530;
-			rect2.bottom = 70;
-			DrawText (hdc, L"STATUS", -1, &rect2, DT_SINGLELINE) ;
+            rect2.top = 40;
+            rect2.left = 380;
+            rect2.right = 530;
+            rect2.bottom = 70;
+            DrawText (hdc, L"STATUS", -1, &rect2, DT_SINGLELINE) ;
 
-			//name of the players
-			SetTextColor(hdc, RGB(0,0,0));
-			hBrush = CreateSolidBrush(RGB(247,214,0));
-			SelectObject (hdc, hBrush);
-			RoundRect(hdc, 55, 90, 185, 120, 20, 20 );
-			RoundRect(hdc, 820, 90, 945, 120, 20, 20 );
+            //name of the players
+            SetTextColor(hdc, RGB(0,0,0));
+            hBrush = CreateSolidBrush(RGB(247,214,0));
+            SelectObject (hdc, hBrush);
+            RoundRect(hdc, 55, 90, 185, 120, 20, 20 );
+            RoundRect(hdc, 820, 90, 945, 120, 20, 20 );
 
-			hFont = CreateFont(25,0,0,0,FW_LIGHT,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+            hFont = CreateFont(25,0,0,0,FW_LIGHT,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
                 CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
-			SelectObject(hdc, hFont);
-			SetBkMode (hdc, TRANSPARENT) ;
+            SelectObject(hdc, hFont);
+            SetBkMode (hdc, TRANSPARENT) ;
 
-			rect2.top = 90;
-			rect2.left = 70;
-			rect2.right = 170;
-			rect2.bottom = 150;
-			DrawText (hdc, szplayer, -1, &rect2, DT_SINGLELINE) ;
-			
-			rect2.top = 90;
-			rect2.left = 830;
-			rect2.right = 930;
-			rect2.bottom = 150;
-			DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
-		
-		EndPaint(hWnd, &ps);
-		break;
+            rect2.top = 90;
+            rect2.left = 70;
+            rect2.right = 170;
+            rect2.bottom = 150;
+            DrawText (hdc, szplayer, -1, &rect2, DT_SINGLELINE) ;
+            
+            rect2.top = 90;
+            rect2.left = 830;
+            rect2.right = 930;
+            rect2.bottom = 150;
+            DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
+        
+        EndPaint(hWnd, &ps);
+        break;
 
-	case WM_LBUTTONDOWN:
-		// get cursor position
-		pCursor.x = LOWORD(lParam);
-		pCursor.y = HIWORD(lParam);
-		// check if the cursor is in the zone
+    case WM_LBUTTONDOWN:
+        // get cursor position
+        pCursor.x = LOWORD(lParam);
+        pCursor.y = HIWORD(lParam);
+        // check if the cursor is in the zone
 
-		if((pCursor.x<RightZone2) && (pCursor.x>LeftZone2) && (pCursor.y>TopZone2) && (pCursor.y< BottomZone2))
-		{
-			//see for the cell
-			float x = ((pCursor.x-LeftZone2)/40);
-			square.x = floor(x);
-			float y = ((pCursor.y-TopZone2)/40);
-			square.y = floor(y);
-		}
+        if((pCursor.x<RightZone2) && (pCursor.x>LeftZone2) && (pCursor.y>TopZone2) && (pCursor.y< BottomZone2))
+        {
+            //see for the cell
+            float x = ((pCursor.x-LeftZone2)/40);
+            square.x = floor(x);
+            float y = ((pCursor.y-TopZone2)/40);
+            square.y = floor(y);
+        }
         break;
     case WM_LBUTTONUP:
-		Move = FALSE;
-		break;
+        Move = FALSE;
+        break;
 
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	return 0;
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+    default:
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+    return 0;
 }
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	UNREFERENCED_PARAMETER(lParam);
-	switch (message)
-	{
-	case WM_INITDIALOG:
-		return (INT_PTR)TRUE;
+    UNREFERENCED_PARAMETER(lParam);
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
 
-	case WM_COMMAND:
-		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-		{
-			EndDialog(hDlg, LOWORD(wParam));
-			return (INT_PTR)TRUE;
-		}
-		break;
-	}
-	return (INT_PTR)FALSE;
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
 }
 
 BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	static HWND		  PortInput, IPInput;
-	int ip1, ip2, ip3, ip4;
+    static HWND          PortInput, IPInput;
+    int ip1, ip2, ip3, ip4;
     switch(Message)
     {
-	case WM_INITDIALOG:
-		IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
-		SendMessage(IPInput, IPM_SETADDRESS, 0, (LPARAM)ipAddress);
-		break;
-	case WM_CREATE:
-		break;
+    case WM_INITDIALOG:
+        IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
+        SendMessage(IPInput, IPM_SETADDRESS, 0, (LPARAM)ipAddress);
+        break;
+    case WM_CREATE:
+        break;
     case WM_COMMAND:
-		switch(LOWORD(wParam))  
-		{         
-		case IDOK:
-			IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
-			SendMessage(IPInput, IPM_GETADDRESS, 0, (LPARAM)&ipAddress);
+        switch(LOWORD(wParam))  
+        {         
+        case IDOK:
+            IPInput = GetDlgItem(hwnd, IDC_IPADDRESS1);
+            SendMessage(IPInput, IPM_GETADDRESS, 0, (LPARAM)&ipAddress);
 
-			ip1 = FIRST_IPADDRESS(ipAddress);
-			ip2 = SECOND_IPADDRESS(ipAddress);
-			ip3 = THIRD_IPADDRESS(ipAddress);
-			ip4 = FOURTH_IPADDRESS(ipAddress);
+            ip1 = FIRST_IPADDRESS(ipAddress);
+            ip2 = SECOND_IPADDRESS(ipAddress);
+            ip3 = THIRD_IPADDRESS(ipAddress);
+            ip4 = FOURTH_IPADDRESS(ipAddress);
 
-			sprintf(ipAddr, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
+            sprintf(ipAddr, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
 
-			EndDialog(hwnd, IDCANCEL);
-			break;    
-		case IDCANCEL:
-			EndDialog(hwnd, IDCANCEL);    
-			break;
-		}  
-		break;     
-	default:
-		return FALSE;
+            EndDialog(hwnd, IDCANCEL);
+            break;    
+        case IDCANCEL:
+            EndDialog(hwnd, IDCANCEL);    
+            break;
+        }  
+        break;     
+    default:
+        return FALSE;
     }
     return TRUE;
 }
 
 void shuffleMap(vector<vector<int> > &map, vector<Battleship> &ships)
 {
-	int m[10][10];
+    int m[10][10];
     int i,j;
     Battleship B[10];
     vector<int> temp;
     randships(m,B);
 
-	for(int i=0; i<map.size(); i++)
-	{
-		map.at(i).clear();
-	}
-	map.clear();
+    for(int i=0; i<map.size(); i++)
+    {
+        map.at(i).clear();
+    }
+    map.clear();
 
-	ships.clear();
+    ships.clear();
 
-	map.resize(10);
-	ships.resize(10);
+    map.resize(10);
+    ships.resize(10);
     for (i=0; i<10; i++)
     {
-		map.at(i).resize(10);
+        map.at(i).resize(10);
         for (j=0; j<10; j++)
-		{
-			map.at(i).at(j) = m[i][j];
+        {
+            map.at(i).at(j) = m[i][j];
             temp.push_back(m[i][j]);
-		}
-		ships.at(i) = B[i];
-	}
+        }
+        ships.at(i) = B[i];
+    }
 
-	enemy_map.clear();
-	enemy_map.resize(10);
-	for(size_t i=0; i<10; i++)
-	{
-		enemy_map[i].resize(10);
-		for(size_t j=0; j<10; j++)
-		{
-			enemy_map.at(i).at(j) = -1;
-		}
-	}
+    enemy_map.clear();
+    enemy_map.resize(10);
+    for(size_t i=0; i<10; i++)
+    {
+        enemy_map[i].resize(10);
+        for(size_t j=0; j<10; j++)
+        {
+            enemy_map.at(i).at(j) = -1;
+        }
+    }
 }
 
 int randships(int map[10][10],Battleship B[10])
 {
-	int i,j,f,k,r,h=9;
+    int i,j,f,k,r,h=9;
     int randNum1, randNum2, ts,s; //pozitionare+directie
 
     srand(time(NULL));      //huevoznaetce
