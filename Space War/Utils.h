@@ -7,6 +7,8 @@ using namespace std;
 
 #define SAFE_DELETE(x) { if(x) { delete (x); (x)=NULL; } }
 
+#define MAX_LOADSTRING 100
+
 #define			LeftZone1		50
 #define			RightZone1		450
 #define			TopZone1		130
