@@ -335,7 +335,7 @@ int randships(int map[10][10],Battleship B[10])
                     f=1;
                     randNum1=i;
                     randNum2=j;
-                    i=10;
+                    i=9;
                     break;
                 }
         if(f==0)
@@ -360,7 +360,7 @@ int randships(int map[10][10],Battleship B[10])
                         && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
                         && map[i-1][j+1]==-1)
                     {
-                        i=10;
+                        i=9;
                         f=1;
                         randNum1=i;
                         randNum2=j;
@@ -378,7 +378,7 @@ int randships(int map[10][10],Battleship B[10])
                     f=1;
                     randNum1=i;
                     randNum2=j;
-                    i=10;
+                    i=9;
                     break;
                 }
         }
