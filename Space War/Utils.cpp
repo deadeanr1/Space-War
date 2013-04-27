@@ -5,7 +5,7 @@
 int randships(int map[10][10],Battleship B[10])
 {
     int i,j,f,k,r,h=9;
-    int randNum1, randNum2,r1,r2 ts,s; //pozitionare+directie
+    int randNum1, randNum2,r1,r2, ts,s; //pozitionare+directie
 
     srand(time(NULL));      //huevoznaetce
 
@@ -331,7 +331,6 @@ int randships(int map[10][10],Battleship B[10])
                 if(f==0&&map[i][j]!=-1||map[i+1][j]!=-1||map[i-1][j]!=-1||map[i][j+1]!=-1
                         ||map[i][j-1]!=-1||map[i+1][j+1]!=-1||map[i-1][j-1]!=-1||map[i+1][j-1]!=-1
                         ||map[i-1][randNum2+1]!=-1)
-                    )
                 {
                     f=1;
                     randNum1=i;
