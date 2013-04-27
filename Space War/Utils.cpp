@@ -5,7 +5,7 @@
 int randships(int map[10][10],Battleship B[10])
 {
     int i,j,f,k,r,h=9;
-    int randNum1, randNum2,r1,r2 ts,s; //pozitionare+directie
+    int randNum1, randNum2,r1,r2,ts,s; //pozitionare+directie
 
     srand(time(NULL));      //huevoznaetce
 
@@ -321,7 +321,7 @@ int randships(int map[10][10],Battleship B[10])
         h--;
     }
 
-    for (k=0; k<4; k++ )                         //1 size
+    for (int k=0; k<4; k++ )                         //1 size
     {
         randNum1=rand()%10;
         randNum2=rand()%10;
@@ -335,6 +335,7 @@ int randships(int map[10][10],Battleship B[10])
                     f=1;
                     randNum1=i;
                     randNum2=j;
+                    i=10;
                     break;
                 }
         if(f==0)
@@ -350,6 +351,36 @@ int randships(int map[10][10],Battleship B[10])
                         randNum2=j;
                         break;
                     }
+        }
+        if(f==0)
+        {
+            for (i=randNum1; i<10; i++)
+                for (j=0; j<randNum2; j++)
+                   if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
+                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
+                        && map[i-1][j+1]==-1)
+                    {
+                        i=10;
+                        f=1;
+                        randNum1=i;
+                        randNum2=j;
+                        break;
+                    }
+        }
+        if(f==0)
+        {
+            for (i=0; i<randNum1; i++)
+            for (j=randNum2; j<10; j++)
+                if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
+                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
+                        && map[i-1][j+1]==-1)
+                {
+                    f=1;
+                    randNum1=i;
+                    randNum2=j;
+                    i=10;
+                    break;
+                }
         }
         /*do
         {
