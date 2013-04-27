@@ -5,7 +5,7 @@
 int randships(int map[10][10],Battleship B[10])
 {
     int i,j,f,k,r,h=9;
-    int randNum1, randNum2, ts,s; //pozitionare+directie
+    int randNum1, randNum2,r1,r2 ts,s; //pozitionare+directie
 
     srand(time(NULL));      //huevoznaetce
 
@@ -80,8 +80,8 @@ int randships(int map[10][10],Battleship B[10])
     }
     B[h].totalHealth=4;
     B[h].textureType=3;
-     B[h].health=4;
-     h--;
+    B[h].health=4;
+    h--;
 
     for (k=0; k<2; k++)                                     //?3sized ship
     {
@@ -283,7 +283,7 @@ int randships(int map[10][10],Battleship B[10])
             map[randNum1][randNum2]=h;
             map[randNum1-1][randNum2]=h;
 
-             B[h].x1=randNum1-1;
+            B[h].x1=randNum1-1;
             B[h].x2=randNum1;
             B[h].y1=B[h].y2=randNum2;
 
@@ -292,7 +292,7 @@ int randships(int map[10][10],Battleship B[10])
             map[randNum1][randNum2]=h;
             map[randNum1+1][randNum2]=h;
 
-              B[h].x1=randNum1;
+            B[h].x1=randNum1;
             B[h].x2=randNum1+1;
             B[h].y1=B[h].y2=randNum2;
             break;
@@ -300,7 +300,7 @@ int randships(int map[10][10],Battleship B[10])
             map[randNum1][randNum2]=h;
             map[randNum1][randNum2-1]=h;
 
-             B[h].x1=B[h].x2=randNum1;
+            B[h].x1=B[h].x2=randNum1;
             B[h].y1=randNum2-1;
             B[h].y2=randNum2;
 
@@ -309,34 +309,63 @@ int randships(int map[10][10],Battleship B[10])
             map[randNum1][randNum2]=h;
             map[randNum1][randNum2+1]=h;
 
-             B[h].x1=B[h].x2=randNum1;
+            B[h].x1=B[h].x2=randNum1;
             B[h].y1=randNum2;
             B[h].y2=randNum2+1;
 
             break;
         }
-         B[h].totalHealth=2;
+        B[h].totalHealth=2;
         B[h].health=2;
         B[h].textureType=1;
         h--;
     }
 
-    for (i=0; i<4; i++ )                         //1 size
+    for (k=0; k<4; k++ )                         //1 size
     {
-        do
+        randNum1=rand()%10;
+        randNum2=rand()%10;
+        f=0;
+        for (i=randNum1; i<10; i++)
+            for (j=randNum2; j<10; j++)
+                if(f==0&&map[i][j]!=-1||map[i+1][j]!=-1||map[i-1][j]!=-1||map[i][j+1]!=-1
+                        ||map[i][j-1]!=-1||map[i+1][j+1]!=-1||map[i-1][j-1]!=-1||map[i+1][j-1]!=-1
+                        ||map[i-1][randNum2+1]!=-1)
+                    )
+                {
+                    f=1;
+                    randNum1=i;
+                    randNum2=j;
+                    break;
+                }
+        if(f==0)
+    {
+        for (i=0; i<randNum1; i++)
+                for (j=0; j<randNum2; j++)
+                    if(f==0&&map[i][j]!=-1||map[i+1][j]!=-1||map[i-1][j]!=-1||map[i][j+1]!=-1
+                            ||map[i][j-1]!=-1||map[i+1][j+1]!=-1||map[i-1][j-1]!=-1||map[i+1][j-1]!=-1
+                            ||map[i-1][randNum2+1]!=-1)
+                    {
+                        f=1;
+                        randNum1=i;
+                        randNum2=j;
+                        break;
+                    }
+        }
+        /*do
         {
             randNum1 =  rand() %10;
             randNum2=  rand() %10;
         }
         while (map[randNum1][randNum2]!=-1||map[randNum1+1][randNum2]!=-1||map[randNum1-1][randNum2]!=-1||map[randNum1][randNum2+1]!=-1||map[randNum1][randNum2-1]!=-1||map[randNum1+1][randNum2+1]!=-1||map[randNum1-1][randNum2-1]!=-1||map[randNum1+1][randNum2-1]!=-1||map[randNum1-1][randNum2+1]!=-1);
-
+        */
         map[randNum1][randNum2]=h;
         B[h].totalHealth=1;
-          B[h].health=1;
-          B[h].textureType=0;
-          B[h].x1=B[h].x2=randNum1;
-          B[h].y1=B[h].y2=randNum2;
-           h--;
+        B[h].health=1;
+        B[h].textureType=0;
+        B[h].x1=B[h].x2=randNum1;
+        B[h].y1=B[h].y2=randNum2;
+        h--;
     }
 
     return 1;
@@ -467,7 +496,7 @@ bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
         strcat (temp,"rship4xv.bmp");
     }
     //hBmp[i] = LoadImageA ( NULL, bmpfile, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-	hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+    hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
     GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
     if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
                   0, 0, SRCCOPY ) == 0 )
@@ -476,6 +505,6 @@ bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
         DeleteDC ( dcmem );
         return false;
     }
-	DeleteDC ( dcmem );  // clear up the memory dc 
-	return true;
+    DeleteDC ( dcmem );  // clear up the memory dc
+    return true;
 }
