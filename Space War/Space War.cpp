@@ -122,7 +122,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	HWND hWnd;  
 	RECT rect;
 	DWORD style;
-	HRGN region;
+	//HRGN region;
 	HBITMAP hwater;
 
 	rect.left = 140;                                //x
@@ -176,9 +176,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // A handle of old memory context
     static HANDLE hOld;
 
-    HDC memhdc;
-    HBITMAP hbitmp;
-    RECT rect;
+    //HDC memhdc;
+    //HBITMAP hbitmp;
+    //RECT rect;
     int ret;
     POINT square = {0};
 	int result = 0;
@@ -274,13 +274,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
-        HDC        hdc_buf, hdc_temp;
-        HGDIOBJ    temp;
+        //HDC        hdc_buf, hdc_temp;
+        //HGDIOBJ    temp;
         static HBITMAP hbmp, hback, hwater;
         BITMAP  bitmap;
         static int cxSource, cySource;
-        HDC hdc, hdcMem, hdcMem2;
-        HPEN Pen;
+        HDC hdc, hdcMem;//, hdcMem2;
+        //HPEN Pen;
         PAINTSTRUCT ps;
         HFONT hFont;
         RECT rect, rect1, rect2;
@@ -369,9 +369,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if((pCursor.x<RightZone2) && (pCursor.x>LeftZone2) && (pCursor.y>TopZone2) && (pCursor.y< BottomZone2))
         {
             //see for the cell
-            float x = ((pCursor.x-LeftZone2)/40);
+            float x = ((pCursor.x-LeftZone2)/40.0f);
             square.x = floor(x);
-            float y = ((pCursor.y-TopZone2)/40);
+            float y = ((pCursor.y-TopZone2)/40.0f);
             square.y = floor(y);
         
 			if( connectionEstablished )
@@ -494,7 +494,7 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 void DrawMatrix(HDC hdc, HWND hWnd)
 {
-    int i, j;
+    //int i, j;
     HPEN hPen;
     HBRUSH hBrush;
     POINT Pt[4];
