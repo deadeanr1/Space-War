@@ -241,7 +241,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }       
             break;
         case ID_NEWGAME_VERSUSCOMPUTER:
-            MessageBox(0, _T("vs. Comp"), 0, 0);
+			if( game )
+			{
+				game->close();
+			}
+			SAFE_DELETE(game);
+
+			game = new PvCGame();
+			game->init();
+
+			myTurn = true;
+			connectionEstablished = true;
+			CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &threadID);
+
+			_stprintf(statusString, _T("Game started! You attack!"));
+			InvalidateRect(hMainWnd, NULL, TRUE);
             break;
         case ID_VS_CREATEGAME:
 			if( game )
@@ -274,13 +288,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
-        //HDC        hdc_buf, hdc_temp;
-        //HGDIOBJ    temp;
         static HBITMAP hbmp, hback, hwater;
         BITMAP  bitmap;
         static int cxSource, cySource;
-        HDC hdc, hdcMem;//, hdcMem2;
-        //HPEN Pen;
+        HDC hdc, hdcMem;
         PAINTSTRUCT ps;
         HFONT hFont;
         RECT rect, rect1, rect2;
@@ -385,17 +396,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						{
 						case -1:			//you missed!
 							myTurn = 0;
-							_stprintf(statusString, _T("You missed!"));
+							_stprintf(statusString, _T("You missed! Enemy attacks..."));
 							break;
 						case -2:			//you hit him!
 							myTurn = 1;
 							enemyTotalCells--;
-							_stprintf(statusString, _T("You hit your enemy!"));
+							_stprintf(statusString, _T("You hit your enemy! You attack!"));
 							break;
 						case -3:			//you destroyed his ship!
 							myTurn = 1;
 							enemyTotalCells--;
-							_stprintf(statusString, _T("You destroyed enemy's ship!"));
+							_stprintf(statusString, _T("You destroyed enemy's ship! You attack!"));
 							break;
 						default:
 							break;
@@ -410,11 +421,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						enemy_map.at(square.y).at(square.x) = -2;
 						InvalidateRect(hMainWnd, NULL, TRUE);
 					}
-					if( myTurn==0 )
-					{
-						_stprintf(statusString, _T("Waiting for enemy's attack..."));
-						InvalidateRect(hMainWnd, NULL, TRUE);
-					}
 				}
 			}
 		}
@@ -424,6 +430,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_DESTROY:
+		if( game )
+		{
+			game->close();
+		}
 		SAFE_DELETE(game);
         PostQuitMessage(0);
         break;
@@ -734,6 +744,8 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 							_stprintf(statusString, _T("You loose! Start a new game or shuffle!"));
 							InvalidateRect(hMainWnd, NULL, TRUE);
 						}
+						_stprintf(statusString, _T("Enemy hit you! He continues attacking..."));
+						InvalidateRect(hMainWnd, NULL, TRUE);
 						break;
 					}
 				}

@@ -6,11 +6,6 @@
 #include "BaseGame.h"
 #include "Utils.h"
 
-//Questions:
-//1) How does AI know if he hit us or not?
-//2) Notation for attack result: 1, 2, 3 or -1, -2, -3 ?
-//3) What does receiveState return?
-
 class PvCGame : public BaseGame
 {
 public:
@@ -23,8 +18,8 @@ public:
 	virtual int sendResult(int result);
 	virtual void close();
 
-	void	setMap(vector<vector<int>> *map);
-	void	setShips(vector<Battleship> *ships);
+	//void	setMap(vector<vector<int>> *map);
+	//void	setShips(vector<Battleship> *ships);
 protected:
 	void getMin(int &x1,int&y1,int x2,int y2);
 	void getMax(int &x1,int&y1,int x2,int y2);
@@ -32,10 +27,20 @@ protected:
 
 protected:
 	vector<vector<int>> AIThinkSpace;//ai blocknote
-	vector<vector<int>> *map;
-	vector<Battleship>	*ships;
+	vector<vector<int>> map;
+	vector<vector<int>> enemy_map;
+	vector<Battleship>	ships;
+
 	int lastAttackResult;
+	int direction[4];
+	int dir;
+	int step;
+	int loh;
 	int injured;
+	int x1,y1,x2,y2;
+	int x, y;			//chosen location to drop the bomb
+	int ts;
+	int tempX,tempY,tempD;
 };
 
 #endif //PVCGAME_H

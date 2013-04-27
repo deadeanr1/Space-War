@@ -27,6 +27,7 @@
 // Local Header Files
 #include "BaseGame.h"
 #include "PvPGame.h"
+#include "PvCGame.h"
 
 
 // TODO: reference additional headers your program requires here
