@@ -31,4 +31,4 @@ These abstract sketches were designed by Ciupin Iaroslav. Lately they were a bit
 
 
 ### Screen shot of final version
-![Screenshot](Screenshot.jpg)
+![Screenshot](Screenshot.JPG)
