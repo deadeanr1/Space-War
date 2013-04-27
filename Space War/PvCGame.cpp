@@ -61,7 +61,7 @@ int PvCGame::sendState(int x, int y, int *result)
 			
 		}
     }
-	*result = 1;
+	*result = -1;
  
 	return 0;
 }
@@ -81,29 +81,37 @@ int PvCGame::receiveState(int * _x, int * _y)
 
     if(injured==0)//impusca ceva nou
     {
-        randNum1=rand()%10;
+		randNum1=rand()%10;
         randNum2=rand()%10;
         f=0;
-         for (i=randNum1; i<10; i++)
-                for (j=randNum2; j<10; j++)
+        for (i=randNum1; i<10; i++)
+		{
+			for (j=randNum2; j<10; j++)
+			{
                 if(f==0&&AIThinkSpace.at(i).at(j)==0)
-                  {
+				{
                     f = 1;
                     x = i;
                     y = j;
                     break;
                 }
+			}
+		}
         if(f==0)
         {
             for (i=0; i<randNum1; i++)
+			{
                 for (j=0; j<randNum2; j++)
-                if(f==0&&AIThinkSpace.at(i).at(j)==0)
-                  {
-                    f=1;
-                    x=i;
-                    y=j;
-                    break;
-                }
+				{
+					if(f==0&&AIThinkSpace.at(i).at(j)==0)
+					{
+						f=1;
+						x=i;
+						y=j;
+						break;
+					}
+				}
+			}
         }
         if(f==0)return -1;
         x1=y1=10;
@@ -188,11 +196,11 @@ int PvCGame::receiveState(int * _x, int * _y)
             }
         }
     }
-    status=receiveState(&x, &y);
+    sendState(x, y, &status);
     // printf("status: %d\n",status);
     switch(status)
     {
-    case 3:
+    case -3:
         AIThinkSpace.at(x).at(y)=2;
         // numShips--;
         injured=0;
@@ -205,7 +213,7 @@ int PvCGame::receiveState(int * _x, int * _y)
         for(i=0; i<4; i++)direction[i]=0;
         step=0;
         return -status;
-    case 2:
+    case -2:
         getMin(x1, y1, x, y);
         getMax(x2, y2, x, y);
         // numShips--;
@@ -224,7 +232,7 @@ int PvCGame::receiveState(int * _x, int * _y)
         if(y<9)if( AIThinkSpace.at(x).at(y+1))direction[3]=1;
         loh=0;
         return -status;
-    case 1:
+    case -1:
 
         if(injured==1)
             direction[ts]=1;
@@ -232,7 +240,6 @@ int PvCGame::receiveState(int * _x, int * _y)
         loh=1;
         return -1;
     }
-
 
 	return 0;
 }
