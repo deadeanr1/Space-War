@@ -24,6 +24,7 @@ POINT pCursor;
 POINT square;
 BOOL Move = FALSE;
 TCHAR statusString[MAX_LOADSTRING] = _T("Start a new game or shuffle!");
+TCHAR scoreString[MAX_LOADSTRING] = _T("Score: ");
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -37,7 +38,6 @@ int enemyTotalCells = 20;
 vector<vector<int>> map;		//map of my battleships
 vector<Battleship>  ships;		//where my ships are located
 vector<vector<int>> enemy_map;	//map of enemy's battleships
-//bool	myTurn;
 volatile static unsigned int connectionEstablished = 0;
 volatile static unsigned int gameIsFinished = 0;
 volatile static unsigned int myTurn = 0;
@@ -176,9 +176,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // A handle of old memory context
     static HANDLE hOld;
 
-    //HDC memhdc;
-    //HBITMAP hbitmp;
-    //RECT rect;
     int ret;
     POINT square = {0};
 	int result = 0;
@@ -250,9 +247,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			game = new PvCGame();
 			game->init();
 
-			myTurn = true;
-			connectionEstablished = true;
+			myTurn = 1;
+			connectionEstablished = 1;
 			CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &threadID);
+			EnableWindow(hShuffleButton, FALSE);
 
 			_stprintf(statusString, _T("Game started! You attack!"));
 			InvalidateRect(hMainWnd, NULL, TRUE);
@@ -304,8 +302,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = GetDC(hWnd);
             hdcMem = CreateCompatibleDC (hdc) ;
             SelectObject (hdcMem, hbmp) ;
-            DrawMatrix(hdcMem, hWnd);
-            BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
+            
+			DrawMatrix(hdcMem, hWnd);
+			//loadAndDrawBitmap(hdcMem, ships);
+            
+			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
             DeleteDC(hdcMem);
             DeleteObject(hbmp);
         
@@ -328,15 +329,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             rect2.top = 600;
             rect2.left = 310;
-            rect2.right = 400;
-            rect2.bottom = 680;
-            DrawText (hdc, L"SCORE", -1, &rect2, DT_SINGLELINE) ;
-
-            rect2.top = 600;
-            rect2.left = 610;
             rect2.right = 700;
             rect2.bottom = 680;
-            DrawText (hdc, L"TIME", -1, &rect2, DT_SINGLELINE) ;
+			_stprintf(scoreString, _T("Score: %d - %d"), 20 - enemyTotalCells, 20 - myTotalCells);
+            DrawText (hdc, scoreString, -1, &rect2, DT_SINGLELINE) ;
 
             rect2.top = 40;
             rect2.left = 380;
@@ -430,6 +426,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_DESTROY:
+		gameIsFinished = 1;
 		if( game )
 		{
 			game->close();
@@ -552,10 +549,13 @@ void DrawMatrix(HDC hdc, HWND hWnd)
         LineTo(hdc, LeftZone1+40*i, BottomZone1);
     }
 
+	int left, top, right, bottom;
+
+	loadAndDrawBitmap(hdc, ships);
+
 	//Draw ships(with green)
 	hBrush = CreateSolidBrush(RGB(0, 255, 0));
 	SelectObject(hdc, hBrush);
-	int left, top, right, bottom;
 	for(size_t i=0; i<ships.size(); i++)
 	{
 		left = LeftZone1+40*ships.at(i).y1;
@@ -712,7 +712,7 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 					case -1:
 						game->sendResult(-1);
 						map.at(y).at(x) = -2;	//make this location already bombed
-						myTurn = true;
+						myTurn = 1;
 						_stprintf(statusString, _T("Enemy missed! You attack!"));
 						InvalidateRect(hMainWnd, NULL, TRUE);
 						break;
@@ -720,10 +720,10 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 						game->sendResult(-1);
 						_stprintf(statusString, _T("Enemy missed! You attack!"));
 						InvalidateRect(hMainWnd, NULL, TRUE);
-						myTurn = true;
+						myTurn = 1;
 						break;
 					default:
-						myTurn = false;							//enemy hit us, he attacks again :(
+						myTurn = 0;							//enemy hit us, he attacks again :(
 						ships.at( map.at(y).at(x) ).health--;	//decrement ships health
 						
 						if( ships.at( map.at(y).at(x) ).health<=0 )

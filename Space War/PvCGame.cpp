@@ -6,24 +6,15 @@ PvCGame::PvCGame()
 {
 }
 
-
 PvCGame::~PvCGame()
 {
 }
 
-//void PvCGame::setMap(vector<vector<int>> *_map)
-//{
-//	map = _map;
-//}
-//
-//void PvCGame::setShips(vector<Battleship> *_ships)
-//{
-//	ships = _ships;
-//}
-
 void PvCGame::init()
 {
 	injured=0;
+	ts = 0;
+	step = 0;
 	for(int i=0; i<AIThinkSpace.size(); i++)
     {
         AIThinkSpace.at(i).clear();
@@ -41,6 +32,7 @@ void PvCGame::init()
     }
 
 	shuffleMap(map, ships, enemy_map);
+	ZeroMemory(direction, 4*sizeof(int));
 }
 
 int PvCGame::sendState(int x, int y, int *result)
@@ -109,7 +101,6 @@ int PvCGame::receiveState(int * _x, int * _y)
         if(f==0)
 		{
 			return 0;
-			//return -1;
 		}
         x1=y1=10;
         x2=y2=0;
@@ -146,9 +137,20 @@ int PvCGame::receiveState(int * _x, int * _y)
     {
         if(loh==1)//STEP>0 o ghicit 2 pozitii si o gresit la a treia
         {
-            direction[tempD]=1;
-            if(tempD<2)tempD=1-tempD;
-            else tempD=5-tempD;
+			if( tempD < 0 && tempD >= 4 )
+			{
+				tempD = rand()%4;
+			}
+			
+			direction[tempD]=1;
+			if(tempD<2)
+			{
+				tempD=1-tempD;
+			}
+			else 
+			{
+				tempD=5-tempD;
+			}
             x=tempX;
             y=tempY;
             if(tempD==0)x=x-step;
@@ -186,7 +188,7 @@ int PvCGame::receiveState(int * _x, int * _y)
 int PvCGame::sendResult(int result)
 {
 	lastAttackResult = result;
-	//================================
+	
 	switch(lastAttackResult)
     {
     case -3:
@@ -204,7 +206,6 @@ int PvCGame::sendResult(int result)
 		}
         step=0;
 		break;
-        //return -lastAttackResult;
     case -2:
         getMin(x1, y1, x, y);
         getMax(x2, y2, x, y);
@@ -212,7 +213,7 @@ int PvCGame::sendResult(int result)
         step++;
         tempX=x;
         tempY=y;
-        AIThinkSpace[x][y]=2;
+        AIThinkSpace.at(x).at(y)=2;
         if(x==0)direction[0]=1;
         if(x==9)direction[1]=1;
         if(y==0)direction[2]=1;
@@ -223,28 +224,26 @@ int PvCGame::sendResult(int result)
         if(y<9)if( AIThinkSpace.at(x).at(y+1))direction[3]=1;
         loh=0;
         break;
-		//return -lastAttackResult;
     case -1:
         if(injured==1)
 		{
-			if( ts > 0 && ts < 4 )
+			if( ts >= 0 && ts < 4 )
 			{
 				direction[ts]=1;
 			}
 			else
 			{
-				MessageBox(0, 0, 0, 0);
+				ts = rand()%4;	//bad temporary solution
+				direction[ts]=1;
 			}
 		}
         AIThinkSpace.at(x).at(y)=1;
         loh=1;
         break;
-		//return -1;
 	default:
 		break;
     }
 
-	//================================
 	return 0;
 }
 
@@ -286,6 +285,10 @@ void PvCGame::drawAround(int x1,int y1,int x2,int y2)
     int minJ=(0<y1) ? y1-1 : y1;
     int maxJ=(9>y2) ? y2+1 : y2;
     for(i=minI; i<=maxI; i++)
+	{
         for(j=minJ; j<=maxJ; j++)
+		{
             AIThinkSpace.at(i).at(j)=(AIThinkSpace.at(i).at(j)!=2)?1:3;
+		}
+	}
 }

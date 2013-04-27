@@ -382,3 +382,100 @@ void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vect
         }
     }
 }
+
+bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
+{
+    HDC dcmem = CreateCompatibleDC ( NULL );
+    int i;
+    HANDLE  hBmp[10];
+    BITMAP bm[10];
+    char bmpfile[] = "..\\images\\";
+    char temp[60];
+    if ( ( NULL == hDC  ) /*|| ( NULL == bmpfile )*/ )
+    {
+        MessageBox(0, _T("Window Parameters Failed!"), _T("Error!"), MB_ICONSTOP | MB_OK);
+        return false;
+    }
+    strcpy (temp, bmpfile);
+    strcat (temp,"rship1x.bmp");
+    for(i=0; i<4; i++)
+    {
+        hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
+        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
+                      0, 0, SRCCOPY ) == 0 )
+        {
+            // failed the blit
+            DeleteDC ( dcmem );
+            return false;
+        }
+    }
+    strcpy (temp, bmpfile);
+    for(i=4; i<7; i++)
+    {
+        strcpy (temp, bmpfile);
+        if(ships[i].x1!=ships[i].x2)
+        {
+            strcat (temp,"rship2x.bmp");
+
+        }
+        else
+        {
+            strcat (temp,"rship2xv.bmp");
+        }
+        hBmp[i] = LoadImageA( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
+        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
+                      0, 0, SRCCOPY ) == 0 )
+        {
+            // failed the blit
+            DeleteDC ( dcmem );
+            return false;
+        }
+    }
+    for(i=7; i<9; i++)
+    {
+        strcpy (temp, bmpfile);
+        if(ships[i].x1!=ships[i].x2)
+        {
+            strcat (temp,"rship3x.bmp");
+
+        }
+        else
+        {
+            strcat (temp,"rship3xv.bmp");
+        }
+        hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
+        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
+                      0, 0, SRCCOPY ) == 0 )
+        {
+            // failed the blit
+            DeleteDC ( dcmem );
+            return false;
+        }
+    }
+
+    strcpy (temp, bmpfile);
+    if(ships[i].x1!=ships[i].x2)
+    {
+        strcat (temp,"rship4x.bmp");
+
+    }
+    else
+    {
+        strcat (temp,"rship4xv.bmp");
+    }
+    //hBmp[i] = LoadImageA ( NULL, bmpfile, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+	hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
+    GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
+    if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
+                  0, 0, SRCCOPY ) == 0 )
+    {
+        // failed the blit
+        DeleteDC ( dcmem );
+        return false;
+    }
+	DeleteDC ( dcmem );  // clear up the memory dc 
+	return true;
+}

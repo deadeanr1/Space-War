@@ -28,6 +28,6 @@ struct Battleship
 
 int randships(int map[10][10],Battleship B[10]);
 void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vector<int>> &enemy_map);
-
+bool loadAndDrawBitmap(HDC hDC, vector<Battleship> &ships);
 
 #endif //UTILS_H

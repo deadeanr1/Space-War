@@ -18,8 +18,6 @@ public:
 	virtual int sendResult(int result);
 	virtual void close();
 
-	//void	setMap(vector<vector<int>> *map);
-	//void	setShips(vector<Battleship> *ships);
 protected:
 	void getMin(int &x1,int&y1,int x2,int y2);
 	void getMax(int &x1,int&y1,int x2,int y2);
