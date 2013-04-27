@@ -1,27 +1,28 @@
-Space-War
-=========
+# Laboratory  work on Windows Programming #5
+###### st. gr. FAF-111: Ciupin Iaroslav, Cojanu Irina, Boscanean Andrian, Ciugureanu Alexandru
 
-#Laboratory  work number 5 on PW
 
-http://www.youtube.com/watch?v=FG9nH3V14uk
-##some tasks
-1. schit(c)a
-2. desene-po4ti facut
-3. pozitionarea corabiilor
-	3.1 random
-	3.2 de mina
-4. logica impuscatului (ranit/impuscat /mimo)
-5. sochets,shmochets
-6. oliaca de delay la robot ,tipa se gindeste
-7. pozitionarea corabiilor ,fiind data potitia initiala
-8. implementarea X(ranit) -(mimo+spatiu in jurul la corabie moarta
-9. sa se ia in calcul impuscatul doar inauntru patratului si nu pe linie,sau acelasi loc,sau loc cu -
-10. ceva scoreboard
-11. vreun bitmap cu inoplaneteanen undeva in colt la inceput
-http://173.203.31.34/galaxylegion/images/aliens/zolazin.png
-12. pe urma stergem sau adaugam sarcini
+## Project Name: Space War
 
+### Introduction
+This program was developed collaborating together. It is a space style clone of Sea Battle Fight. Each of us was working on his part of project:
+	
+* Ciupin Iaroslav - General scheme(carcass) of project. Managing task between us. Network part of application.
+* Cojanu Irina - GUI design and implementation. 
+* Boscanean Andrian - Artificial Intelligence for computer
+* Ciugureanu Alexandru - Textures for space battleships
+
+### About the Game
+Game has 2 modes: offline(vs. Computer) and online(vs. Another Player). Initially you have 10 ships which have sum of cells 20. There are placed in random parts of the map according so specific algorithm. If you want another placement you can shuffle ships. When you are happy with ships configuration, go to main menu Game->vs. Computer or Game->vs. Player. When playing with another player you have 2 possibilities: create a game and wait for a connection from another player or you connect to already created game. For connection you need IP address of server. Network mode is based on Windows Sockets. All the connections that need some time to pass are placed in separate thread.
+
+### About the AI algorithm
+
+
+### Some initial sketches
+These abstract sketches were designed by Ciupin Iaroslav. Lately they were a bit changed when we encountered different problems.
 ![Conceptual scheme](Scheme.jpg)
-
 ![Pseudocode](Base_pseudocode.jpg)
-![Result Window](https://github.com/deadeanr1/Space-War/blob/master/images/game.png?raw=true)
+
+
+### Screen shot of final version
+![Screenshot](Screenshot.jpg)
