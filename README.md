@@ -17,9 +17,10 @@ Game has 2 modes: offline(vs. Computer) and online(vs. Another Player). Initiall
 
 ### About AI Brain Algorithm
 It tried to think like a simple man, without a special strategy,but at least careful. He thinks in the following way:
-1. if there is no injured ship he picks randomly a free,never chosen position
-2. if he have some luck and  injures once a ship,he pick randomly a position around that coordinate, until he guesses
-3. if AI gets 2 or more shoots on a ship,then misses in a line ,he shoots in opposite direction and kills that ship,
+* if there is no injured ship he picks randomly a free,never chosen position
+* if he have some luck and  injures once a ship,he pick randomly a position around that coordinate, until he guesses
+* if AI gets 2 or more shoots on a ship,then misses in a line ,he shoots in opposite direction and kills that ship
+* if AI kills a ship, it returns to beginning until kills the remaining ships
 whithout regrets.
 
 
