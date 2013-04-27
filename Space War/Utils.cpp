@@ -330,7 +330,7 @@ int randships(int map[10][10],Battleship B[10])
             for (j=randNum2; j<10; j++)
                 if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
                         && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][randNum2+1]==-1)
+                        && map[i-1][j+1]==-1)
                 {
                     f=1;
                     randNum1=i;
@@ -343,7 +343,7 @@ int randships(int map[10][10],Battleship B[10])
                 for (j=0; j<randNum2; j++)
                    if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
                         && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][randNum2+1]==-1)
+                        && map[i-1][j+1]==-1)
                     {
                         f=1;
                         randNum1=i;
