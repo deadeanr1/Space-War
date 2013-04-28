@@ -137,7 +137,7 @@ int PvCGame::receiveState(int * _x, int * _y)
     {
         if(loh==1)//STEP>0 o ghicit 2 pozitii si o gresit la a treia
         {
-			if( tempD < 0 && tempD >= 4 )
+			if( tempD < 0 || tempD >= 4 )
 			{
 				tempD = rand()%4;
 			}
@@ -179,7 +179,16 @@ int PvCGame::receiveState(int * _x, int * _y)
         }
     }
     
+	if( x < 0 || x >= 10 )
+	{
+		x = rand()%10;	//if some internal error happens, just take random variable
+	}
 	*_x = x;
+
+	if( y < 0 || y >= 10 )
+	{
+		y = rand()%10;	//if some internal error happens, just take random variable
+	}
 	*_y = y;
 
 	return 0;

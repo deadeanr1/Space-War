@@ -224,7 +224,7 @@ HANDLE hImage;
         if((HWND)lParam == hShuffleButton)
         {
             shuffleMap(map, ships, enemy_map);
-			InvalidateRect(hWnd, NULL, TRUE);
+			InvalidateRect(hWnd, NULL, FALSE);
         }
 
         // Parse the menu selections:
@@ -264,7 +264,7 @@ HANDLE hImage;
 			EnableWindow(hShuffleButton, FALSE);
 
 			_stprintf(statusString, _T("Game started! You attack!"));
-			InvalidateRect(hMainWnd, NULL, TRUE);
+			InvalidateRect(hMainWnd, NULL, FALSE);
             break;
         case ID_VS_CREATEGAME:
 			if( game )
@@ -429,10 +429,10 @@ HANDLE hImage;
 							gameIsFinished = 1;
 							EnableWindow(hShuffleButton, TRUE);
 							_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
-							InvalidateRect(hMainWnd, NULL, TRUE);
+							InvalidateRect(hMainWnd, NULL, FALSE);
 						}
 						enemy_map.at(square.y).at(square.x) = -2;
-						InvalidateRect(hMainWnd, NULL, TRUE);
+						InvalidateRect(hMainWnd, NULL, FALSE);
 					}
 				}
 			}
@@ -669,7 +669,7 @@ DWORD WINAPI CreatePvPGame(LPVOID )
 	enemyTotalCells = 20;
 	//Update status
 	_stprintf(statusString, _T("Waiting for connection..."));
-	InvalidateRect(hMainWnd, NULL, TRUE);
+	InvalidateRect(hMainWnd, NULL, FALSE);
 	EnableWindow(hShuffleButton, FALSE);
 	if( game )
 	{
@@ -681,7 +681,7 @@ DWORD WINAPI CreatePvPGame(LPVOID )
 	}
 	//Update status
 	_stprintf(statusString, _T("Connected! Drop a bomb on your enemy's map!"));
-	InvalidateRect(hMainWnd, NULL, TRUE);
+	InvalidateRect(hMainWnd, NULL, FALSE);
 	//Start receiving loop in a separate thread
 	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
 	return 0;
@@ -695,7 +695,7 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 	enemyTotalCells = 20;
 	//Update status
 	_stprintf(statusString, _T("Connecting to server..."));
-	InvalidateRect(hMainWnd, NULL, TRUE);
+	InvalidateRect(hMainWnd, NULL, FALSE);
 	EnableWindow(hShuffleButton, FALSE);
 	if( game )
 	{
@@ -707,7 +707,7 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 	}
 	//Update status
 	_stprintf(statusString, _T("Connected! Your opponents attacks! Hold On"));
-	InvalidateRect(hMainWnd, NULL, TRUE);
+	InvalidateRect(hMainWnd, NULL, FALSE);
 	//Start receiving loop in a separate thread
 	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
 	return 0;
@@ -732,12 +732,12 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 						map.at(y).at(x) = -2;	//make this location already bombed
 						myTurn = 1;
 						_stprintf(statusString, _T("Enemy missed! You attack!"));
-						InvalidateRect(hMainWnd, NULL, TRUE);
+						InvalidateRect(hMainWnd, NULL, FALSE);
 						break;
 					case -2:
 						game->sendResult(-1);
 						_stprintf(statusString, _T("Enemy missed! You attack!"));
-						InvalidateRect(hMainWnd, NULL, TRUE);
+						InvalidateRect(hMainWnd, NULL, FALSE);
 						myTurn = 1;
 						break;
 					default:
@@ -760,10 +760,10 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 							gameIsFinished = 1;
 							EnableWindow(hShuffleButton, TRUE);
 							_stprintf(statusString, _T("You loose! Start a new game or shuffle!"));
-							InvalidateRect(hMainWnd, NULL, TRUE);
+							InvalidateRect(hMainWnd, NULL, FALSE);
 						}
 						_stprintf(statusString, _T("Enemy hit you! He continues attacking..."));
-						InvalidateRect(hMainWnd, NULL, TRUE);
+						InvalidateRect(hMainWnd, NULL, FALSE);
 						break;
 					}
 				}
