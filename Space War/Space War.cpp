@@ -177,6 +177,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     // A handle of old memory context
     static HANDLE hOld;
+    HWND hStatic;
+HANDLE hImage;
+  
+       int i = 1;
 
     int ret;
     POINT square = {0};
@@ -207,6 +211,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         shuffleMap(map, ships, enemy_map);
 
 		sprintf(ipAddr, "127.0.0.1");	//localhost ip-address by default
+
+
+        //loadAndDrawBitmap(hWnd, hInst, hdc, ships);
+    
+
         break;
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
@@ -306,7 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SelectObject (hdcMem, hbmp) ;
             
 			DrawMatrix(hdcMem, hWnd);
-			//loadAndDrawBitmap(hdcMem, ships);
+			//loadAndDrawBitmap(hWnd, hInst, hdcMem, ships);
             
 			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
             DeleteDC(hdcMem);
@@ -559,10 +568,11 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 
 	int left, top, right, bottom;
 
-	loadAndDrawBitmap(hdc, ships);
+    //load ships bitmap
+	loadAndDrawBitmap(hWnd, hInst, hdc, ships);
 
 	//Draw ships(with green)
-	hBrush = CreateSolidBrush(RGB(0, 255, 0));
+/*	hBrush = CreateSolidBrush(RGB(0, 255, 0));
 	SelectObject(hdc, hBrush);
 	for(size_t i=0; i<ships.size(); i++)
 	{
@@ -572,7 +582,7 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 		bottom = TopZone1+40*(ships.at(i).x2+1);
 		Rectangle(hdc, left, top, right, bottom);
 	}
-
+    */
 	//Draw bombed zones(with red)
 	hBrush = CreateSolidBrush(RGB(255, 0, 0));
 	SelectObject(hdc, hBrush);
