@@ -39,4 +39,7 @@ These abstract sketches were designed by Ciupin Iaroslav. Lately they were a bit
 
 
 ### Screen shot of final version
+First case
 ![Screenshot](Screenshot.JPG)
+Second case
+// will be added by Alex Cigureanu
