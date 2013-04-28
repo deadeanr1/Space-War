@@ -83,7 +83,7 @@ int randships(int map[10][10],Battleship B[10])
     B[h].health=4;
     h--;
 
-    for (k=0; k<2; k++)                                     //?3sized ship
+    for (k=0; k<2; k++)                                     //3sized ship
     {
         do
         {
@@ -442,7 +442,7 @@ void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vect
     }
 }
 
-bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
+bool loadAndDrawBitmap(HWND hWnd, HINSTANCE hInst, HDC hDC,vector<Battleship> &ships)
 {
     HDC dcmem = CreateCompatibleDC ( NULL );
     int i;
@@ -450,29 +450,23 @@ bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
     BITMAP bm[10];
     char bmpfile[] = "..\\images\\";
     char temp[60];
-    if ( ( NULL == hDC  ) /*|| ( NULL == bmpfile )*/ )
-    {
-        MessageBox(0, _T("Window Parameters Failed!"), _T("Error!"), MB_ICONSTOP | MB_OK);
-        return false;
-    }
-    strcpy (temp, bmpfile);
-    strcat (temp,"rship1x.bmp");
+    HWND hStatic;
+    HANDLE hImage;
+
+  //  strcat (temp,"rship1x.bmp");
+
     for(i=0; i<4; i++)
     {
-        hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
-        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
-                      0, 0, SRCCOPY ) == 0 )
-        {
-            // failed the blit
-            DeleteDC ( dcmem );
-            return false;
-        }
+        SetBkMode (hDC, TRANSPARENT) ;
+        hStatic = CreateWindowEx (WS_EX_STATICEDGE, L"STATIC", NULL,
+        WS_CHILD | WS_VISIBLE | SS_BITMAP, 50+40*ships[i].x1, 130+40*ships[i].y1, 0, 0, hWnd, 0, hInst, NULL);
+
+        hImage = LoadImage(hInst, L"rship1x.bmp", IMAGE_BITMAP, 39, 39, LR_LOADFROMFILE);
+        SendMessage(hStatic, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
     }
-    strcpy (temp, bmpfile);
-    for(i=4; i<7; i++)
+
+  /*  for(i=4; i<7; i++)
     {
-        strcpy (temp, bmpfile);
         if(ships[i].x1!=ships[i].x2)
         {
             strcat (temp,"rship2x.bmp");
@@ -534,7 +528,7 @@ bool loadAndDrawBitmap(HDC hDC,vector<Battleship> &ships)
         // failed the blit
         DeleteDC ( dcmem );
         return false;
-    }
-    DeleteDC ( dcmem );  // clear up the memory dc
-    return true;
+    }*/
+	DeleteDC ( dcmem );  // clear up the memory dc 
+	return true;
 }

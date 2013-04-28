@@ -12,6 +12,8 @@ HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                  // The name of player
 TCHAR szplayer[MAX_LOADSTRING] = L"Player";     // The name of ememy
 TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";       // The title bar text
+TCHAR statusString[MAX_LOADSTRING] = _T("Start a new game or shuffle!");
+TCHAR scoreString[MAX_LOADSTRING] = _T("Score: ");
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HWND hMainWnd;									// handle to main window
 int WINDOW_WIDTH = 1000;
@@ -23,8 +25,8 @@ static DWORD StartTime;
 POINT pCursor;
 POINT square;
 BOOL Move = FALSE;
-TCHAR statusString[MAX_LOADSTRING] = _T("Start a new game or shuffle!");
-TCHAR scoreString[MAX_LOADSTRING] = _T("Score: ");
+
+
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -175,6 +177,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static HBITMAP hbmMem;
     // A handle of old memory context
     static HANDLE hOld;
+    HWND hStatic;
+HANDLE hImage;
+  
+       int i = 1;
 
     int ret;
     POINT square = {0};
@@ -193,10 +199,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 										L"BUTTON",
 										L"Shuffle",          
 										WS_CHILD | WS_VISIBLE | ES_CENTER,
-										350,              
-										105,              
+										335,              
+										102,              
 										80,               
-										20,               
+										23,               
 										hWnd,              
 										(HMENU)IDC_MAIN_BUTTON,
 										GetModuleHandle(NULL),
@@ -205,6 +211,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         shuffleMap(map, ships, enemy_map);
 
 		sprintf(ipAddr, "127.0.0.1");	//localhost ip-address by default
+
+
+        //loadAndDrawBitmap(hWnd, hInst, hdc, ships);
+    
+
         break;
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
@@ -304,7 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SelectObject (hdcMem, hbmp) ;
             
 			DrawMatrix(hdcMem, hWnd);
-			//loadAndDrawBitmap(hdcMem, ships);
+			//loadAndDrawBitmap(hWnd, hInst, hdcMem, ships);
             
 			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
             DeleteDC(hdcMem);
@@ -328,12 +339,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawText (hdc, L"Ships", -1, &rect1, DT_SINGLELINE) ;
 
             rect2.top = 600;
-            rect2.left = 310;
+            rect2.left = 420;
             rect2.right = 700;
             rect2.bottom = 680;
+            hFont = CreateFont(35,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            SelectObject(hdc, hFont);
 			_stprintf(scoreString, _T("Score: %d - %d"), 20 - enemyTotalCells, 20 - myTotalCells);
             DrawText (hdc, scoreString, -1, &rect2, DT_SINGLELINE) ;
 
+            hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            SelectObject(hdc, hFont);
             rect2.top = 40;
             rect2.left = 380;
             rect2.right = 730;
@@ -551,10 +568,11 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 
 	int left, top, right, bottom;
 
-	loadAndDrawBitmap(hdc, ships);
+    //load ships bitmap
+	loadAndDrawBitmap(hWnd, hInst, hdc, ships);
 
 	//Draw ships(with green)
-	hBrush = CreateSolidBrush(RGB(0, 255, 0));
+/*	hBrush = CreateSolidBrush(RGB(0, 255, 0));
 	SelectObject(hdc, hBrush);
 	for(size_t i=0; i<ships.size(); i++)
 	{
@@ -564,7 +582,7 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 		bottom = TopZone1+40*(ships.at(i).x2+1);
 		Rectangle(hdc, left, top, right, bottom);
 	}
-
+    */
 	//Draw bombed zones(with red)
 	hBrush = CreateSolidBrush(RGB(255, 0, 0));
 	SelectObject(hdc, hBrush);
