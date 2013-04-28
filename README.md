@@ -10,10 +10,18 @@ This program was developed collaborating together. It is a space style clone of 
 * Ciupin Iaroslav - General scheme(carcass) of project. Managing task between us. Network part of application.
 * Cojanu Irina - GUI design and implementation. 
 * Boscanean Andrian - Artificial Intelligence for computer. Random arrangement  of ships algorithm.
-* Ciugureanu Alexandru - Textures for space battleships
+* Ciugureanu Alexandru - Textures for space battleships and load them into the game.
 
 ### About the Game
-Game has 2 modes: offline(vs. Computer) and online(vs. Another Player). Initially you have 10 ships which have sum of cells 20. There are placed in random parts of the map according so specific algorithm. If you want another placement you can shuffle ships. When you are happy with ships configuration, go to main menu Game->vs. Computer or Game->vs. Player. When playing with another player you have 2 possibilities: create a game and wait for a connection from another player or you connect to already created game. For connection you need IP address of server. Network mode is based on Windows Sockets. All the connections that need some time to pass are placed in separate thread.
+Game has 2 modes: offline(vs. Computer) and online(vs. Another Player). Initially you have 10 ships which have 
+sum of cells 20. There are placed in random parts of the map according so specific algorithm. Initially the 
+game was using the function DrawShips() which was drawing green and red rectangles which represented our ships. 
+Then the function was replaced with real ships.
+If you want another placement you can shuffle ships. When you are happy with ships configuration, 
+go to main menu Game->vs. Computer or Game->vs. Player. When playing with another player you have 
+2 possibilities: create a game and wait for a connection from another player or you connect to already
+created game. For connection you need IP address of server. Network mode is based on Windows Sockets. 
+All the connections that need some time to pass are placed in separate thread.
 
 ### About AI Brain Algorithm
 AI(aka Computer) tried to think like a simple man, without a special strategy,but at least is careful with the following strategy:
