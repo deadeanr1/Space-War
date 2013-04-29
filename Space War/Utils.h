@@ -7,7 +7,7 @@ using namespace std;
 
 #define SAFE_DELETE(x) { if(x) { delete (x); (x)=NULL; } }
 
-#define MAX_LOADSTRING 100
+#define MAX_LOADSTRING 130
 
 #define			LeftZone1		50
 #define			RightZone1		450
@@ -28,6 +28,5 @@ struct Battleship
 
 int randships(int map[10][10],Battleship B[10]);
 void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vector<int>> &enemy_map);
-bool loadAndDrawBitmap(HWND hWnd, HINSTANCE hInst, HDC hDC, vector<Battleship> &ships);
 
 #endif //UTILS_H

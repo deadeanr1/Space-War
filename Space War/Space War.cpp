@@ -136,24 +136,24 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	rect.bottom = rect.top + WINDOW_HEIGHT;                                     //height
 
 
-	hInst = hInstance;                                                          // Store instance handle in our global variable
+	hInst = hInstance;                                                          
 
 	style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
 			WS_MINIMIZEBOX | WS_CLIPCHILDREN;
   
 
 	hWnd = CreateWindow(
-			szWindowClass,                                                      // (opt) classname
-			szTitle,                                                            // (opt) The window name
-			WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,                // The style of the window being created.
+			szWindowClass,                                                      
+			szTitle,                                                            
+			WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,                
 			rect.left, 
 			rect.top,
-			rect.right-rect.left,                                               // width of the window
-			rect.bottom-rect.top,                                               // hight vertical position of the window.
-			NULL,                                                               // (opt) handle to the parent or owner window of the window being created
-			NULL,                                                               // (opt) handle to a menu
-			hInstance,                                                          // (opt) handle to the instance of the module to be associated with the window.
-			NULL                                                                // (opt) pter to a value to be passed to the window through the CREATESTRUCT
+			rect.right-rect.left,                                               
+			rect.bottom-rect.top,                                               
+			NULL,                                                               
+			NULL,                                                               
+			hInstance,                                                          
+			NULL                                                                
 		);
 
 	hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
@@ -181,7 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // A handle of old memory context
     static HANDLE hOld;
     HWND hStatic;
-HANDLE hImage;
+    HANDLE hImage;
   
        int i = 1;
 
