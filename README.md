@@ -10,7 +10,8 @@ This program was developed collaborating together. It is a space style clone of 
 * Ciupin Iaroslav - General scheme(carcass) of project. Managing task between us. Network part of application.
 * Cojanu Irina - GUI design and implementation. 
 * Boscanean Andrian - Artificial Intelligence for computer. Random arrangement  of ships algorithm.
-* Ciugureanu Alexandru - Textures for space battleships and load them into the game.
+* Ciugureanu Alexandru - Textures for space battleships, bombs, explosition and load them into the game.
+( implimentation of the final design)
 
 ### About the Game
 Game has 2 modes: offline(vs. Computer) and online(vs. Another Player). Initially you have 10 ships which have 
@@ -38,8 +39,12 @@ These abstract sketches were designed by Ciupin Iaroslav. Lately they were a bit
 ![Pseudocode](Base_pseudocode.jpg)
 
 
-### Screen shot of final version
-First case
-![Screenshot](Screenshot.JPG)
-Second case
-// will be added by Alex Cigureanu
+### Screenshot of different version of the game
+###Version I
+![Step1](https://github.com/deadeanr1/Space-War/blob/master/Results/step1.png?raw=true)
+###Version II
+![Screenshot](https://github.com/deadeanr1/Space-War/blob/master/Results/step2.JPG?raw=true)
+###Final result
+![Final](https://github.com/deadeanr1/Space-War/blob/master/Results/final%20result.png?raw=true)
+###Example of game
+![Example](https://github.com/deadeanr1/Space-War/blob/master/Results/example.png?raw=true)
