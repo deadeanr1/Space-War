@@ -8,6 +8,7 @@
 using namespace std;
 
 // Global Variables:
+HBITMAP hBitmap,hBitmap2,hBitmap2v,hBitmap3, hBitmap3v,hBitmap4, hBitmap4v, hBitmapE, hBitmapM;
 HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                  // The name of player
 TCHAR szplayer[MAX_LOADSTRING] = L"Player";     // The name of ememy
@@ -33,6 +34,8 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK       NetworkProc(HWND, UINT, WPARAM, LPARAM);
+
+void DrawShot(HDC, HWND );
 
 BaseGame*	game = NULL;
 int	myTotalCells = 20;
@@ -72,7 +75,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     //loading the background
     hBitBack = LoadImage(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND), IMAGE_BITMAP, 
-        WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+                         WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     hInst = hInstance;
     if (!hBitBack)
         return FALSE;
@@ -127,32 +130,32 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	//HRGN region;
 	HBITMAP hwater;
 
-	rect.left = 140;                                //x
-	rect.top = 10;                                //y
-	rect.right = rect.left + WINDOW_WIDTH;        //width
-	rect.bottom = rect.top + WINDOW_HEIGHT;        //height
+	rect.left = 140;                                                            //x
+	rect.top = 10;                                                              //y
+	rect.right = rect.left + WINDOW_WIDTH;                                      //width
+	rect.bottom = rect.top + WINDOW_HEIGHT;                                     //height
 
 
-	hInst = hInstance; // Store instance handle in our global variable
+	hInst = hInstance;                                                          // Store instance handle in our global variable
 
 	style = WS_POPUP | WS_CLIPSIBLINGS | WS_OVERLAPPED | WS_SYSMENU | 
 			WS_MINIMIZEBOX | WS_CLIPCHILDREN;
   
 
 	hWnd = CreateWindow(
-			szWindowClass,          // (opt) classname
-			szTitle,                // (opt) The window name
-			WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,    // The style of the window being created.
+			szWindowClass,                                                      // (opt) classname
+			szTitle,                                                            // (opt) The window name
+			WS_OVERLAPPED|WS_BORDER|WS_SYSMENU | WS_MINIMIZEBOX,                // The style of the window being created.
 			rect.left, 
 			rect.top,
-			rect.right-rect.left,   // width of the window
-			rect.bottom-rect.top,   // hight vertical position of the window.
-			NULL,                   // (opt) handle to the parent or owner window of the window being created
-			NULL,                   // (opt) handle to a menu
-			hInstance,              // (opt) handle to the instance of the module to be associated with the window.
-			NULL                    // (opt) pter to a value to be passed to the window through the CREATESTRUCT
+			rect.right-rect.left,                                               // width of the window
+			rect.bottom-rect.top,                                               // hight vertical position of the window.
+			NULL,                                                               // (opt) handle to the parent or owner window of the window being created
+			NULL,                                                               // (opt) handle to a menu
+			hInstance,                                                          // (opt) handle to the instance of the module to be associated with the window.
+			NULL                                                                // (opt) pter to a value to be passed to the window through the CREATESTRUCT
 		);
-   
+
 	hwater = LoadBitmap(hInst,MAKEINTRESOURCE(IDB_WATER));
 
 	if(!hWnd)
@@ -212,11 +215,17 @@ HANDLE hImage;
 
 		sprintf(ipAddr, "127.0.0.1");	//localhost ip-address by default
 
-
-        //loadAndDrawBitmap(hWnd, hInst, hdc, ships);
-    
-
+		hBitmap		= LoadBitmap (hInst, TEXT ("ship1"));;
+		hBitmap2	= LoadBitmap (hInst, TEXT ("ship2"));
+		hBitmap2v	= LoadBitmap (hInst, TEXT ("ship2v"));
+		hBitmap3	= LoadBitmap (hInst, TEXT ("ship3"));
+		hBitmap3v	= LoadBitmap (hInst, TEXT ("ship3v"));                      //Load of all images for action
+		hBitmap4	= LoadBitmap (hInst, TEXT ("ship4"));
+		hBitmap4v	= LoadBitmap (hInst, TEXT ("ship4v"));
+		hBitmapE	= LoadBitmap (hInst, TEXT ("explosion"));
+		hBitmapM	= LoadBitmap (hInst, TEXT ("miss"));
         break;
+
     case WM_COMMAND:
         wmId    = LOWORD(wParam);
         wmEvent = HIWORD(wParam);
@@ -301,6 +310,7 @@ HANDLE hImage;
         BITMAP  bitmap;
         static int cxSource, cySource;
         HDC hdc, hdcMem;
+		HDC hdcMem1;
         PAINTSTRUCT ps;
         HFONT hFont;
         RECT rect, rect1, rect2;
@@ -312,10 +322,10 @@ HANDLE hImage;
 
             hdc = GetDC(hWnd);
             hdcMem = CreateCompatibleDC (hdc) ;
+			
             SelectObject (hdcMem, hbmp) ;
             
-			DrawMatrix(hdcMem, hWnd);
-			//loadAndDrawBitmap(hWnd, hInst, hdcMem, ships);
+			DrawMatrix(hdcMem, hWnd);                                           //animation function
             
 			BitBlt (hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, hdcMem, 0, 0, SRCCOPY) ;
             DeleteDC(hdcMem);
@@ -325,8 +335,10 @@ HANDLE hImage;
             rect.left = 100;
             rect.right = 650;
             rect.bottom = 650;
-            hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
-                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            hFont = CreateFont(25, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, 
+                               DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                               CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, 
+                               VARIABLE_PITCH,TEXT("Times New Roman"));
             SelectObject(hdc, hFont);
             SetBkMode (hdc, TRANSPARENT) ;
             SetTextColor(hdc, RGB(255,255,255));
@@ -342,14 +354,18 @@ HANDLE hImage;
             rect2.left = 420;
             rect2.right = 700;
             rect2.bottom = 680;
-            hFont = CreateFont(35,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
-                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            hFont = CreateFont(35, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, 
+                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                                CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, 
+                                VARIABLE_PITCH,TEXT("Times New Roman"));
             SelectObject(hdc, hFont);
 			_stprintf(scoreString, _T("Score: %d - %d"), 20 - enemyTotalCells, 20 - myTotalCells);
             DrawText (hdc, scoreString, -1, &rect2, DT_SINGLELINE) ;
 
-            hFont = CreateFont(25,0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
-                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            hFont = CreateFont(25, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, 
+                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                                CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, 
+                                VARIABLE_PITCH,TEXT("Times New Roman"));
             SelectObject(hdc, hFont);
             rect2.top = 40;
             rect2.left = 380;
@@ -364,8 +380,10 @@ HANDLE hImage;
             RoundRect(hdc, 55, 90, 185, 120, 20, 20 );
             RoundRect(hdc, 820, 90, 945, 120, 20, 20 );
 
-            hFont = CreateFont(25,0,0,0,FW_LIGHT,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
-                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Times New Roman"));
+            hFont = CreateFont(25, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE, 
+                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                                CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, 
+                                VARIABLE_PITCH,TEXT("Times New Roman"));
             SelectObject(hdc, hFont);
             SetBkMode (hdc, TRANSPARENT) ;
 
@@ -380,11 +398,12 @@ HANDLE hImage;
             rect2.right = 930;
             rect2.bottom = 150;
             DrawText (hdc, szenemy, -1, &rect2, DT_SINGLELINE) ;
-        
+			
         EndPaint(hWnd, &ps);
         break;
 
     case WM_LBUTTONDOWN:
+
         // get cursor position
         pCursor.x = LOWORD(lParam);
         pCursor.y = HIWORD(lParam);
@@ -404,6 +423,7 @@ HANDLE hImage;
 				{
 					if( myTurn==1 )
 					{
+						enemy_map.at(square.y).at(square.x) = -2;               //the position is shot
 						game->sendState(square.x, square.y, &result);
 						switch( result )
 						{
@@ -415,11 +435,13 @@ HANDLE hImage;
 							myTurn = 1;
 							enemyTotalCells--;
 							_stprintf(statusString, _T("You hit your enemy! You attack!"));
+							enemy_map.at(square.y).at(square.x) = -3;
 							break;
 						case -3:			//you destroyed his ship!
 							myTurn = 1;
 							enemyTotalCells--;
 							_stprintf(statusString, _T("You destroyed enemy's ship! You attack!"));
+							enemy_map.at(square.y).at(square.x) = -3;
 							break;
 						default:
 							break;
@@ -431,7 +453,6 @@ HANDLE hImage;
 							_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
 							InvalidateRect(hMainWnd, NULL, FALSE);
 						}
-						enemy_map.at(square.y).at(square.x) = -2;
 						InvalidateRect(hMainWnd, NULL, FALSE);
 					}
 				}
@@ -518,16 +539,14 @@ BOOL CALLBACK NetworkProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 void DrawMatrix(HDC hdc, HWND hWnd)
 {
-    //int i, j;
+	HDC hdcMem1;
     HPEN hPen;
     HBRUSH hBrush;
     POINT Pt[4];
     int RGB = RGB(82,90,90);
 
-    // 1st Zone1
-    // prepare the color
-    hPen = CreatePen (PS_SOLID, 6,RGB);
-    hBrush = CreateSolidBrush(RGB);
+    hPen = CreatePen (PS_SOLID, 6,RGB);                                         //1st Zone
+    hBrush = CreateSolidBrush(RGB);                                             //prepare to color
     SelectObject (hdc, hPen);
     SelectObject (hdc, hBrush);
 
@@ -544,8 +563,8 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     Pt[2].y = 120;
     PolyPolygon(hdc, Pt, lpPts, 1);
 
-    //water
-    hBrush = CreateSolidBrush(RGB(85,127,255));
+    //space
+    hBrush = CreateSolidBrush(RGB(1,8,18));
     SelectObject (hdc, hBrush);
     Rectangle(hdc,47, 127,454, 535);
 
@@ -553,14 +572,14 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
     SelectObject (hdc, hPen);
 
-    for (int i=1; i<10; i++)
+    for (int i = 1; i < 10; i++)
     {
         MoveToEx(hdc, LeftZone1, TopZone1+40*i, NULL);
         LineTo(hdc, RightZone1, TopZone1+40*i);
     }
     
 	//vertical lines
-    for (int i=1; i<10; i++)
+    for (int i = 1; i < 10; i++)
     {
         MoveToEx(hdc, LeftZone1+40*i, TopZone1, NULL);
         LineTo(hdc, LeftZone1+40*i, BottomZone1);
@@ -568,35 +587,103 @@ void DrawMatrix(HDC hdc, HWND hWnd)
 
 	int left, top, right, bottom;
 
-    //load ships bitmap
-	loadAndDrawBitmap(hWnd, hInst, hdc, ships);
-
-	//Draw ships(with green)
-/*	hBrush = CreateSolidBrush(RGB(0, 255, 0));
-	SelectObject(hdc, hBrush);
 	for(size_t i=0; i<ships.size(); i++)
-	{
-		left = LeftZone1+40*ships.at(i).y1;
-		top = TopZone1+40*ships.at(i).x1;
-		right = LeftZone1+40*(ships.at(i).y2+1);
-		bottom = TopZone1+40*(ships.at(i).x2+1);
-		Rectangle(hdc, left, top, right, bottom);
+	{	
+		if(i < 4)                                                               //drow 1x ship
+        {                                                              
+			hdcMem1 = CreateCompatibleDC (hdc) ;
+			SelectObject (hdcMem1, hBitmap);
+			BitBlt (hdc, LeftZone1 + 40 * ships.at(i).y1 + 1, 
+                         TopZone1 + 40 * ships.at(i).x1 + 1, 
+                         38, 
+                         38, 
+                         hdcMem1, 0, 0, SRCCOPY);
+			DeleteDC(hdcMem1);
+		}
+
+		if(i > 3 && i < 7)                                                      //drow 2x ship
+        {
+			hdcMem1 = CreateCompatibleDC (hdc) ;
+			if(ships.at(i).y2 - ships.at(i).y1 < ships.at(i).x2 - ships.at(i).x1)//choose vertical or horizontal one
+            {
+				SelectObject (hdcMem1, hBitmap2v);
+			} 
+            else 
+            {
+				SelectObject (hdcMem1, hBitmap2);
+			}
+
+			BitBlt (hdc, LeftZone1 + 40 * ships.at(i).y1 + 1, 
+                         TopZone1 + 40 * ships.at(i).x1 + 1, 
+						 LeftZone1 + 40 * (ships.at(i).y2 + 1) - 2, 
+                         TopZone1 + 40 * (ships.at(i).x2 + 1) - 2, 
+                         hdcMem1, 0, 0, SRCCOPY);
+			DeleteDC(hdcMem1);
+		}
+	
+		if(i > 6 && i < 9)                                                      //drow 3x ship
+        {
+			hdcMem1 = CreateCompatibleDC (hdc) ;
+			if(ships.at(i).y2 - ships.at(i).y1 < ships.at(i).x2 - ships.at(i).x1)
+            {
+				SelectObject (hdcMem1, hBitmap3v);
+			} 
+            else 
+            {
+				SelectObject (hdcMem1, hBitmap3);
+			}
+			BitBlt (hdc, LeftZone1 + 40 * ships.at(i).y1 + 1, 
+                         TopZone1 + 40 * ships.at(i).x1 + 1, 
+						 LeftZone1 + 40 * (ships.at(i).y2 + 1) - 2, 
+                         TopZone1 + 40 * (ships.at(i).x2 + 1) - 2, 
+                         hdcMem1, 0, 0, SRCCOPY);
+			DeleteDC(hdcMem1);
+		}
+
+		if(i > 8)                                                               //drow 4x ship
+        {                                                        
+			hdcMem1 = CreateCompatibleDC (hdc) ;
+			if(ships.at(i).y2 - ships.at(i).y1 < ships.at(i).x2 - ships.at(i).x1)
+            {
+				SelectObject (hdcMem1, hBitmap4v);
+			} 
+            else 
+            {
+				SelectObject (hdcMem1, hBitmap4);
+			}
+			BitBlt (hdc, LeftZone1 + 40 * ships.at(i).y1 + 1, 
+                         TopZone1 + 40 * ships.at(i).x1 + 1, 
+						 LeftZone1 + 40 * (ships.at(i).y2+1) - 2, 
+                         TopZone1 + 40 * (ships.at(i).x2 + 1) - 2, 
+                         hdcMem1, 0, 0, SRCCOPY);
+			DeleteDC(hdcMem1);
+		}
+		
 	}
-    */
-	//Draw bombed zones(with red)
-	hBrush = CreateSolidBrush(RGB(255, 0, 0));
-	SelectObject(hdc, hBrush);
+
 	for(size_t i=0; i<map.size(); i++)
 	{
 		for(size_t j=0; j<map.at(i).size(); j++)
 		{
-			if( map.at(i).at(j)==-2 )
+			left = LeftZone1+40*j;
+			top = TopZone1+40*i;
+			right = LeftZone1+40*(j+1);
+			bottom = TopZone1+40*(i+1);
+
+			if( map.at(i).at(j) == -2 )
 			{
-				left = LeftZone1+40*j;
-				top = TopZone1+40*i;
-				right = LeftZone1+40*(j+1);
-				bottom = TopZone1+40*(i+1);
-				Rectangle(hdc, left, top, right, bottom);
+				hdcMem1 = CreateCompatibleDC (hdc) ;
+				SelectObject (hdcMem1, hBitmapM);
+				BitBlt (hdc, left + 1, top + 1, right , bottom, hdcMem1, 0, 0, SRCCOPY);
+				DeleteDC(hdcMem1);
+			}
+
+			if( map.at(i).at(j) == -3 )
+			{
+				hdcMem1 = CreateCompatibleDC (hdc) ;
+				SelectObject (hdcMem1, hBitmapE);
+				BitBlt (hdc, left + 1, top + 1, right, bottom, hdcMem1, 0, 0, SRCCOPY);
+				DeleteDC(hdcMem1);
 			}
 		}
 	}
@@ -621,8 +708,8 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     Pt[2].y = 120;
     PolyPolygon(hdc, Pt, lpPts, 1);
 
-    //water
-    hBrush = CreateSolidBrush(RGB(85,127,255));
+    //space
+    hBrush = CreateSolidBrush(RGB(1,8,18));
     SelectObject (hdc, hBrush);
 
     Rectangle(hdc,546, 127,953, 535);
@@ -630,32 +717,43 @@ void DrawMatrix(HDC hdc, HWND hWnd)
     //horizontal lines
     hPen = CreatePen (PS_SOLID, 1,RGB(127,170,255));
     SelectObject (hdc, hPen);
-    for (int i=1; i<10; i++)
+    for (int i = 1; i < 10; i++)
     {
-        MoveToEx(hdc, LeftZone2, TopZone2+40*i, NULL);
-        LineTo(hdc, RightZone2, TopZone2+40*i);
+        MoveToEx(hdc, LeftZone2, TopZone2 + 40 * i, NULL);
+        LineTo(hdc, RightZone2, TopZone2 + 40 * i);
     }
     
-    for (int i=1; i<10; i++)
+    for (int i = 1; i < 10; i++)
     {
-        MoveToEx(hdc, LeftZone2+40*i, TopZone2, NULL);
-        LineTo(hdc, LeftZone2+40*i, BottomZone2);
+        MoveToEx(hdc, LeftZone2 + 40 * i, TopZone2, NULL);
+        LineTo(hdc, LeftZone2 + 40 * i, BottomZone2);
     }
 
 	//Draw bombed zones(with red)
 	hBrush = CreateSolidBrush(RGB(255, 0, 0));
 	SelectObject(hdc, hBrush);
-	for(size_t i=0; i<enemy_map.size(); i++)
+	for(size_t i = 0; i < enemy_map.size(); i++)
 	{
-		for(size_t j=0; j<enemy_map.at(i).size(); j++)
+		for(size_t j = 0; j < enemy_map.at(i).size(); j++)
 		{
-			if( enemy_map.at(i).at(j)==-2 )
+			left = LeftZone2 + 40 * j;
+			top = TopZone2 + 40 * i;
+			right = LeftZone2 + 40 * (j + 1);
+			bottom = TopZone2 + 40 * (i + 1);
+			if( enemy_map.at(i).at(j) == -2 )
 			{
-				left = LeftZone2+40*j;
-				top = TopZone2+40*i;
-				right = LeftZone2+40*(j+1);
-				bottom = TopZone2+40*(i+1);
-				Rectangle(hdc, left, top, right, bottom);
+				hdcMem1 = CreateCompatibleDC (hdc) ;
+				SelectObject (hdcMem1, hBitmapM);
+				BitBlt (hdc, left + 1, top + 1, right, bottom, hdcMem1, 0, 0, SRCCOPY);
+				DeleteDC(hdcMem1);
+			}
+
+			if( enemy_map.at(i).at(j) == -3 )
+			{
+				hdcMem1 = CreateCompatibleDC (hdc) ;
+				SelectObject (hdcMem1, hBitmapE);
+				BitBlt (hdc, left + 1, top + 1, right, bottom, hdcMem1, 0, 0, SRCCOPY);
+				DeleteDC(hdcMem1);
 			}
 		}
 	}
@@ -736,7 +834,7 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 						break;
 					case -2:
 						game->sendResult(-1);
-						_stprintf(statusString, _T("Enemy missed! You attack!"));
+						_stprintf(statusString, _T("Enemy Hit! He attacks!"));
 						InvalidateRect(hMainWnd, NULL, FALSE);
 						myTurn = 1;
 						break;
@@ -752,7 +850,7 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 						{
 							game->sendResult(-2);				//he hit my ship
 						}
-						map.at(y).at(x) = -2;					//now this cell is bombed
+						map.at(y).at(x) = -3;					//now this cell is bombed, hit shit
 
 						myTotalCells--;			
 						if( myTotalCells<=0 )

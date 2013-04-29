@@ -459,11 +459,31 @@ bool loadAndDrawBitmap(HWND hWnd, HINSTANCE hInst, HDC hDC,vector<Battleship> &s
     {
         SetBkMode (hDC, TRANSPARENT) ;
         hStatic = CreateWindowEx (WS_EX_STATICEDGE, L"STATIC", NULL,
-        WS_CHILD | WS_VISIBLE | SS_BITMAP, 50+40*ships[i].x1, 130+40*ships[i].y1, 0, 0, hWnd, 0, hInst, NULL);
+			WS_CHILD | WS_VISIBLE | SS_BITMAP, 50+40*ships.at(i).x1, 130+40*ships.at(i).y1, 40, 40, hWnd, 0, hInst, NULL);
 
-        hImage = LoadImage(hInst, L"rship1x.bmp", IMAGE_BITMAP, 39, 39, LR_LOADFROMFILE);
+        hImage = LoadImage(hInst, L"rship1x.bmp", IMAGE_BITMAP, 40, 40, LR_LOADFROMFILE);
         SendMessage(hStatic, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
     }
+	/*
+	left = LeftZone1+40*ships.at(i).y1;
+		top = TopZone1+40*ships.at(i).x1;
+		right = LeftZone1+40*(ships.at(i).y2+1);
+		bottom = TopZone1+40*(ships.at(i).x2+1);
+		Rectangle(hdc, left, top, right, bottom);
+
+	#define			LeftZone1		50
+#define			RightZone1		450
+#define			TopZone1		130
+#define			BottomZone1		530
+#define			LeftZone2		549
+#define			RightZone2		949
+#define			TopZone2		130
+#define			BottomZone2		530
+	left = LeftZone1+40*ships.at(i).y1;
+		top = TopZone1+40*ships.at(i).x1;
+		right = LeftZone1+40*(ships.at(i).y2+1);
+		bottom = TopZone1+40*(ships.at(i).x2+1);
+		Rectangle(hdc, left, top, right, bottom);*/
 
   /*  for(i=4; i<7; i++)
     {
