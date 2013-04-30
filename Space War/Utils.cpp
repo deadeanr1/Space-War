@@ -328,14 +328,20 @@ int randships(int map[10][10],Battleship B[10])
         f=0;
         for (i=randNum1; i<10; i++)
             for (j=randNum2; j<10; j++)
-                if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
-                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][j+1]==-1)
+                if(f==0 && map[i][j]==-1 
+						&& (i==9||map[i+1][j]==-1) 
+						&& (i==0 || map[i-1][j]==-1) 
+						&& (j==9||map[i][j+1]==-1)
+                        && (j==0||map[i][j-1]==-1) 
+						&& (i==9&&j==9||map[i+1][j+1]==-1) 
+						&& (i==0&&j==0||map[i-1][j-1]==-1) 
+						&& (i==9&&j==0||map[i+1][j-1]==-1)
+                        && (i==0&&j==9||map[i-1][j+1]==-1))
                 {
                     f=1;
                     randNum1=i;
                     randNum2=j;
-                    i=9;
+                   // i=9;
                     break;
                 }
         if(f==0)
