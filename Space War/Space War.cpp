@@ -13,7 +13,7 @@ HINSTANCE hInst;                                // current instance
 TCHAR szTitle[MAX_LOADSTRING];                  // The name of player
 TCHAR szplayer[MAX_LOADSTRING] = L"Player";     // The name of ememy
 TCHAR szenemy[MAX_LOADSTRING] = L"Enemy";       // The title bar text
-TCHAR statusString[MAX_LOADSTRING] = _T("Start a new game or shuffle!");
+TCHAR statusString[MAX_LOADSTRING] = _T("Start new game or shuffle!");
 TCHAR scoreString[MAX_LOADSTRING] = _T("Score: ");
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HWND hMainWnd;									// handle to main window
@@ -431,7 +431,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							{
 							case -1:			//you missed!
 								myTurn = 0;
-								_stprintf(statusString, _T("You missed! Enemy attacks..."));
+								_stprintf(statusString, _T("You missed! Enemy attacks!"));
 								break;
 							case -2:			//you hit him!
 								myTurn = 1;
@@ -452,7 +452,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							{
 								gameIsFinished = 1;
 								EnableWindow(hShuffleButton, TRUE);
-								_stprintf(statusString, _T("You won! Start a new game or shuffle!"));
+								_stprintf(statusString, _T("You won!"));
 								InvalidateRect(hMainWnd, NULL, FALSE);
 							}
 							InvalidateRect(hMainWnd, NULL, FALSE);
@@ -781,7 +781,7 @@ DWORD WINAPI CreatePvPGame(LPVOID )
 		InterlockedIncrement(&connectionEstablished);
 	}
 	//Update status
-	_stprintf(statusString, _T("Connected! Drop a bomb on your enemy's map!"));
+	_stprintf(statusString, _T("Connected! You attack!"));
 	InvalidateRect(hMainWnd, NULL, FALSE);
 	//Start receiving loop in a separate thread
 	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
@@ -807,7 +807,7 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 		InterlockedIncrement(&connectionEstablished);
 	}
 	//Update status
-	_stprintf(statusString, _T("Connected! Your opponents attacks! Hold On"));
+	_stprintf(statusString, _T("Connected! Your enemy attacks!"));
 	InvalidateRect(hMainWnd, NULL, FALSE);
 	//Start receiving loop in a separate thread
 	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
@@ -860,10 +860,10 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 						{
 							gameIsFinished = 1;
 							EnableWindow(hShuffleButton, TRUE);
-							_stprintf(statusString, _T("You loose! Start a new game or shuffle!"));
+							_stprintf(statusString, _T("You loose!"));
 							InvalidateRect(hMainWnd, NULL, FALSE);
 						}
-						_stprintf(statusString, _T("Enemy hit you! He continues attacking..."));
+						_stprintf(statusString, _T("Enemy hit you! He attacks!"));
 						InvalidateRect(hMainWnd, NULL, FALSE);
 						break;
 					}
