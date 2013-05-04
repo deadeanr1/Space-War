@@ -328,14 +328,20 @@ int randships(int map[10][10],Battleship B[10])
         f=0;
         for (i=randNum1; i<10; i++)
             for (j=randNum2; j<10; j++)
-                if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
-                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][j+1]==-1)
+                if(f==0 && map[i][j]==-1 
+						&& (i==9||map[i+1][j]==-1) 
+						&& (i==0 || map[i-1][j]==-1) 
+						&& (j==9||map[i][j+1]==-1)
+                        && (j==0||map[i][j-1]==-1) 
+						&& (i==9&&j==9||map[i+1][j+1]==-1) 
+						&& (i==0&&j==0||map[i-1][j-1]==-1) 
+						&& (i==9&&j==0||map[i+1][j-1]==-1)
+                        && (i==0&&j==9||map[i-1][j+1]==-1))
                 {
                     f=1;
                     randNum1=i;
                     randNum2=j;
-                    i=9;
+                   // i=9;
                     break;
                 }
         if(f==0)
@@ -382,13 +388,7 @@ int randships(int map[10][10],Battleship B[10])
                     break;
                 }
         }
-        /*do
-        {
-            randNum1 =  rand() %10;
-            randNum2=  rand() %10;
-        }
-        while (map[randNum1][randNum2]!=-1||map[randNum1+1][randNum2]!=-1||map[randNum1-1][randNum2]!=-1||map[randNum1][randNum2+1]!=-1||map[randNum1][randNum2-1]!=-1||map[randNum1+1][randNum2+1]!=-1||map[randNum1-1][randNum2-1]!=-1||map[randNum1+1][randNum2-1]!=-1||map[randNum1-1][randNum2+1]!=-1);
-        */
+       
         map[randNum1][randNum2]=h;
         B[h].totalHealth=1;
         B[h].health=1;
@@ -440,95 +440,4 @@ void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vect
             enemy_map.at(i).at(j) = -1;
         }
     }
-}
-
-bool loadAndDrawBitmap(HWND hWnd, HINSTANCE hInst, HDC hDC,vector<Battleship> &ships)
-{
-    HDC dcmem = CreateCompatibleDC ( NULL );
-    int i;
-    HANDLE  hBmp[10];
-    BITMAP bm[10];
-    char bmpfile[] = "..\\images\\";
-    char temp[60];
-    HWND hStatic;
-    HANDLE hImage;
-
-  //  strcat (temp,"rship1x.bmp");
-
-    for(i=0; i<4; i++)
-    {
-        SetBkMode (hDC, TRANSPARENT) ;
-        hStatic = CreateWindowEx (WS_EX_STATICEDGE, L"STATIC", NULL,
-        WS_CHILD | WS_VISIBLE | SS_BITMAP, 50+40*ships[i].x1, 130+40*ships[i].y1, 0, 0, hWnd, 0, hInst, NULL);
-
-        hImage = LoadImage(hInst, L"rship1x.bmp", IMAGE_BITMAP, 39, 39, LR_LOADFROMFILE);
-        SendMessage(hStatic, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
-    }
-
-  /*  for(i=4; i<7; i++)
-    {
-        if(ships[i].x1!=ships[i].x2)
-        {
-            strcat (temp,"rship2x.bmp");
-
-        }
-        else
-        {
-            strcat (temp,"rship2xv.bmp");
-        }
-        hBmp[i] = LoadImageA( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
-        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
-                      0, 0, SRCCOPY ) == 0 )
-        {
-            // failed the blit
-            DeleteDC ( dcmem );
-            return false;
-        }
-    }
-    for(i=7; i<9; i++)
-    {
-        strcpy (temp, bmpfile);
-        if(ships[i].x1!=ships[i].x2)
-        {
-            strcat (temp,"rship3x.bmp");
-
-        }
-        else
-        {
-            strcat (temp,"rship3xv.bmp");
-        }
-        hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-        GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
-        if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
-                      0, 0, SRCCOPY ) == 0 )
-        {
-            // failed the blit
-            DeleteDC ( dcmem );
-            return false;
-        }
-    }
-
-    strcpy (temp, bmpfile);
-    if(ships[i].x1!=ships[i].x2)
-    {
-        strcat (temp,"rship4x.bmp");
-
-    }
-    else
-    {
-        strcat (temp,"rship4xv.bmp");
-    }
-    //hBmp[i] = LoadImageA ( NULL, bmpfile, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-    hBmp[i] = LoadImageA ( NULL, temp, IMAGE_BITMAP, 0, 0,LR_LOADFROMFILE );
-    GetObject ( hBmp[i], sizeof(bm[i]), &bm[i] );
-    if ( BitBlt ( hDC, 50+40*ships[i].x1, 130+40*ships[i].y1, bm[i].bmWidth, bm[i].bmHeight, dcmem,
-                  0, 0, SRCCOPY ) == 0 )
-    {
-        // failed the blit
-        DeleteDC ( dcmem );
-        return false;
-    }*/
-	DeleteDC ( dcmem );  // clear up the memory dc 
-	return true;
 }
