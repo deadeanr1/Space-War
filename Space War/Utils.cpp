@@ -441,3 +441,14 @@ void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vect
         }
     }
 }
+
+void safePutValue(vector<vector<int>> &map, int i_where, int j_where, int value)
+{
+	if( i_where>=0 && i_where<map.size() && j_where>=0 && j_where<map.size() )
+	{
+		if( map.at(i_where).at(j_where) != -3 )
+		{
+			map.at(i_where).at(j_where) = value;
+		}
+	}
+}

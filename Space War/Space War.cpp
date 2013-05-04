@@ -55,6 +55,7 @@ DWORD ipAddress = 0;
 char ipAddr[20];
 
 void DrawMatrix(HDC hdc, HWND hWnd);
+void AdjustMap(vector<vector<int>>& map);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -444,6 +445,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 								enemyTotalCells--;
 								_stprintf(statusString, _T("You destroyed enemy's ship! You attack!"));
 								enemy_map.at(square.y).at(square.x) = -3;
+								AdjustMap(enemy_map);
 								break;
 							default:
 								break;
@@ -872,4 +874,27 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 		}
 	}
 	return 0;
+}
+
+void AdjustMap(vector<vector<int>>& map)
+{
+	for(int i=0; i<map.size(); i++)
+	{
+		for(int j=0; j<map.at(i).size(); j++)
+		{
+			if( map.at(i).at(j) == -3 )
+			{
+				safePutValue(map, i-1, j-1, -2);
+				safePutValue(map, i,   j-1, -2);
+				safePutValue(map, i+1, j-1, -2);
+
+				safePutValue(map, i-1, j, -2);
+				safePutValue(map, i+1, j, -2);
+
+				safePutValue(map, i-1, j+1, -2);
+				safePutValue(map, i,   j+1, -2);
+				safePutValue(map, i+1, j+1, -2);
+			}
+		}
+	}
 }
