@@ -17,9 +17,12 @@ int randships(int map[10][10],Battleship B[10])
     {
 
         f=0;                                 //4-sized ship
+        Sleep(20);
         randNum1 =  rand() %10;
+        Sleep(10);
         randNum2=  rand() %10;
 
+        Sleep(10);
         ts = 1+rand()%4;
         //verify if ship does not exceed the limit of map
         if (ts== 1&&0<=randNum1 &&randNum1<3)f=1;
@@ -88,9 +91,12 @@ int randships(int map[10][10],Battleship B[10])
         do
         {
             f=0;
+            Sleep(10);
             randNum1 =  rand() %10;
+            Sleep(10);
             randNum2=  rand() %10;
 
+            Sleep(10);
             ts = 1+rand()%4;
 
             if (ts==1)
@@ -210,9 +216,12 @@ int randships(int map[10][10],Battleship B[10])
         do
         {
             f=0;
+            Sleep(10);
             randNum1 =  rand() %10;
+            Sleep(10);
             randNum2=  rand() %10;
 
+            Sleep(10);
             ts = 1+rand()%4;
 
             if (ts==1)
@@ -323,34 +332,36 @@ int randships(int map[10][10],Battleship B[10])
 
     for (int k=0; k<4; k++ )                         //1 size
     {
+        Sleep(10);
         randNum1=rand()%10;
+        Sleep(10);
         randNum2=rand()%10;
         f=0;
         for (i=randNum1; i<10; i++)
             for (j=randNum2; j<10; j++)
-                if(f==0 && map[i][j]==-1 
-						&& (i==9||map[i+1][j]==-1) 
-						&& (i==0 || map[i-1][j]==-1) 
-						&& (j==9||map[i][j+1]==-1)
-                        && (j==0||map[i][j-1]==-1) 
-						&& (i==9&&j==9||map[i+1][j+1]==-1) 
-						&& (i==0&&j==0||map[i-1][j-1]==-1) 
-						&& (i==9&&j==0||map[i+1][j-1]==-1)
+                if(f==0 && map[i][j]==-1
+                        && (i==9||map[i+1][j]==-1)
+                        && (i==0 || map[i-1][j]==-1)
+                        && (j==9||map[i][j+1]==-1)
+                        && (j==0||map[i][j-1]==-1)
+                        && (i==9&&j==9||map[i+1][j+1]==-1)
+                        && (i==0&&j==0||map[i-1][j-1]==-1)
+                        && (i==9&&j==0||map[i+1][j-1]==-1)
                         && (i==0&&j==9||map[i-1][j+1]==-1))
                 {
                     f=1;
                     randNum1=i;
                     randNum2=j;
-                   // i=9;
+                    // i=9;
                     break;
                 }
         if(f==0)
-		{
-        for (i=0; i<randNum1; i++)
+        {
+            for (i=0; i<randNum1; i++)
                 for (j=0; j<randNum2; j++)
-                   if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
-                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][j+1]==-1)
+                    if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
+                            && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
+                            && map[i-1][j+1]==-1)
                     {
                         f=1;
                         randNum1=i;
@@ -362,9 +373,9 @@ int randships(int map[10][10],Battleship B[10])
         {
             for (i=randNum1; i<10; i++)
                 for (j=0; j<randNum2; j++)
-                   if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
-                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][j+1]==-1)
+                    if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
+                            && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
+                            && map[i-1][j+1]==-1)
                     {
                         i=9;
                         f=1;
@@ -376,19 +387,19 @@ int randships(int map[10][10],Battleship B[10])
         if(f==0)
         {
             for (i=0; i<randNum1; i++)
-            for (j=randNum2; j<10; j++)
-                if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
-                        && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
-                        && map[i-1][j+1]==-1)
-                {
-                    f=1;
-                    randNum1=i;
-                    randNum2=j;
-                    i=9;
-                    break;
-                }
+                for (j=randNum2; j<10; j++)
+                    if(f==0 && map[i][j]==-1 && map[i+1][j]==-1 && map[i-1][j]==-1 && map[i][j+1]==-1
+                            && map[i][j-1]==-1 && map[i+1][j+1]==-1 && map[i-1][j-1]==-1 && map[i+1][j-1]==-1
+                            && map[i-1][j+1]==-1)
+                    {
+                        f=1;
+                        randNum1=i;
+                        randNum2=j;
+                        i=9;
+                        break;
+                    }
         }
-       
+
         map[randNum1][randNum2]=h;
         B[h].totalHealth=1;
         B[h].health=1;
@@ -444,11 +455,11 @@ void shuffleMap(vector<vector<int>> &map, vector<Battleship> &ships, vector<vect
 
 void safePutValue(vector<vector<int>> &map, int i_where, int j_where, int value)
 {
-	if( i_where>=0 && i_where<map.size() && j_where>=0 && j_where<map.size() )
-	{
-		if( map.at(i_where).at(j_where) != -3 )
-		{
-			map.at(i_where).at(j_where) = value;
-		}
-	}
+    if( i_where>=0 && i_where<map.size() && j_where>=0 && j_where<map.size() )
+    {
+        if( map.at(i_where).at(j_where) != -3 )
+        {
+            map.at(i_where).at(j_where) = value;
+        }
+    }
 }

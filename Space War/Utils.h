@@ -2,7 +2,7 @@
 #define UTILS_H
 
 #include <vector>
-
+#include<windows.h>
 using namespace std;
 
 #define SAFE_DELETE(x) { if(x) { delete (x); (x)=NULL; } }
