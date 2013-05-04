@@ -44,7 +44,7 @@ vector<vector<int>> map;		//map of my battleships
 vector<Battleship>  ships;		//where my ships are located
 vector<vector<int>> enemy_map;	//map of enemy's battleships
 volatile static unsigned int connectionEstablished = 0;
-volatile static unsigned int gameIsFinished = 0;
+volatile static unsigned int gameIsFinished = 2;
 volatile static unsigned int myTurn = 0;
 DWORD threadID = 0;
 DWORD recThreadID = 0;
@@ -268,6 +268,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			game = new PvCGame();
 			game->init();
 
+			gameIsFinished = 0;
 			myTurn = 1;
 			connectionEstablished = 1;
 			CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &threadID);
@@ -286,6 +287,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			game = new PvPGame();
 			game->init();
 
+			gameIsFinished = 0;
+
 			CreateThread(NULL, 0, CreatePvPGame, NULL, 0, &threadID);
             break;
         case ID_VS_CONNECTTOGAME:
@@ -297,6 +300,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			game = new PvPGame();
 			game->init();
+
+			gameIsFinished = 0;
 
 			CreateThread(NULL, 0, ConnectToPvPGame, NULL, 0, &threadID);
             break;
@@ -478,6 +483,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
     default:
+		if( gameIsFinished == 1 )
+		{
+			EnableWindow(hShuffleButton, TRUE);
+			InvalidateRect(hMainWnd, NULL, FALSE);
+			gameIsFinished = 2;
+		}
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
     return 0;
@@ -819,7 +830,7 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 DWORD WINAPI ReceiveLoop(LPVOID )
 {
 	int x=-1, y=-1;
-	while( gameIsFinished!=1 )
+	while( gameIsFinished < 1 )
 	{
 		if( game )
 		{
