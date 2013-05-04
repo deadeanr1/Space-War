@@ -437,13 +437,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							case -2:			//you hit him!
 								myTurn = 1;
 								enemyTotalCells--;
-								_stprintf(statusString, _T("You hit your enemy! You attack!"));
+								_stprintf(statusString, _T("You hit! You attack!"));
 								enemy_map.at(square.y).at(square.x) = -3;
 								break;
 							case -3:			//you destroyed his ship!
 								myTurn = 1;
 								enemyTotalCells--;
-								_stprintf(statusString, _T("You destroyed enemy's ship! You attack!"));
+								_stprintf(statusString, _T("Enemy's ship destroyed! You attack!"));
 								enemy_map.at(square.y).at(square.x) = -3;
 								AdjustMap(enemy_map);
 								break;
@@ -809,7 +809,7 @@ DWORD WINAPI ConnectToPvPGame(LPVOID )
 		InterlockedIncrement(&connectionEstablished);
 	}
 	//Update status
-	_stprintf(statusString, _T("Connected! Your enemy attacks!"));
+	_stprintf(statusString, _T("Connected! Enemy attacks!"));
 	InvalidateRect(hMainWnd, NULL, FALSE);
 	//Start receiving loop in a separate thread
 	CreateThread(NULL, 0, ReceiveLoop, NULL, 0, &recThreadID);
@@ -865,8 +865,6 @@ DWORD WINAPI ReceiveLoop(LPVOID )
 							_stprintf(statusString, _T("You loose!"));
 							InvalidateRect(hMainWnd, NULL, FALSE);
 						}
-						_stprintf(statusString, _T("Enemy hit you! He attacks!"));
-						InvalidateRect(hMainWnd, NULL, FALSE);
 						break;
 					}
 				}
