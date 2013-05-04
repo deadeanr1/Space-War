@@ -178,7 +178,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     // A handle of old memory context
     static HANDLE hOld;
     HWND hStatic;
-HANDLE hImage;
+	HANDLE hImage;
   
        int i = 1;
 
